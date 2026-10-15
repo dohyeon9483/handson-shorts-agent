@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&display=block">
+<style>
+  /* 세로 쇼츠(1080x1920) 그래픽 층 — shorts.py 가 프레임마다 render(state) 를 부른다. 2026-10-14
+     레이아웃 규칙: 위 0~288 UI · 제목 300~580 · 강사 600~ · 말자막 1420(74%) · 아래 1520~ UI. 오른쪽 버튼 열(x 888~)을 피한다 */
+  :root{--key:#FFD400;--ink:#F4F2EC;--muted:#9C978E;--red:#FF4433;
+   --tex:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:transparent;font-family:'Pretendard',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+  body.bg{background:#121212}
+  #board{position:absolute;inset:0;background:var(--tex),radial-gradient(ellipse at 50% 35%,#262626 0%,#121212 75%);display:none}
+  body.bg #board{display:block}
+  #stage{position:absolute;inset:0}
+  mark{background:none;color:var(--key)}
+  .chip{display:inline-block;font-weight:800;font-size:30px;padding:6px 16px 8px;border-radius:4px;background:var(--key);color:#111}
+  .title{position:absolute;left:60px;right:200px;top:300px}
+  .title .h{font-weight:900;line-height:1.14;letter-spacing:-0.04em;margin-top:16px;text-shadow:0 4px 24px rgba(0,0,0,.5)}
+  .cap{position:absolute;left:468px;top:1420px;transform:translateX(-50%);background:rgba(255,255,255,.96);color:#151515;font-weight:800;
+    font-size:58px;letter-spacing:-0.02em;padding:14px 34px 18px;border-radius:10px;white-space:nowrap;box-shadow:0 14px 40px rgba(0,0,0,.4)}
+  .cap b{background:linear-gradient(transparent 55%,#FFD400 55%)}
+  .doc{position:absolute;left:110px;top:330px;width:820px;background:#fff;color:#1B1A18;border-radius:8px;padding:30px 40px;box-shadow:0 30px 70px rgba(0,0,0,.5)}
+  .doc .h{font-weight:900;font-size:50px} .doc .ex{font-size:24px;color:#9C978E;border:2px solid #CFC8BE;border-radius:4px;padding:2px 10px;vertical-align:8px}
+  .doc .r{display:flex;justify-content:space-between;padding:14px 0;border-bottom:2px solid #E6E2DA;font-size:32px}
+  .doc .tot{position:relative;display:flex;justify-content:space-between;margin-top:18px;font-size:40px;font-weight:900;padding:4px 8px}
+  .doc .tot i{position:absolute;left:0;top:50%;bottom:0;background:rgba(255,212,0,.82)} .doc .tot span{position:relative}
+  .blur{filter:blur(8px)}
+  .hand{position:absolute;font-family:'East Sea Dokdo',cursive;color:var(--red);line-height:1;white-space:nowrap;text-shadow:0 0 14px rgba(0,0,0,.85)}
+  .chart{position:absolute;left:80px;right:80px;top:760px;height:420px;display:flex;align-items:flex-end;gap:26px;border-bottom:3px solid rgba(244,242,236,.85)}
+  .chart div{flex:1;border-radius:8px 8px 0 0}
+  .ring{position:absolute;border-radius:50%;border:6px solid var(--key);box-sizing:border-box;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+  .cta{position:absolute;left:60px;background:var(--key);color:#111;font-weight:900;font-size:36px;padding:12px 24px;border-radius:8px}
+  .split-line{position:absolute;left:0;right:0;height:6px;background:var(--key)}
+  /* ======== 캡컷식 효과 (seg.style "cc") — 2026-10-15 ======== */
+  .title.cc{left:40px;right:40px;text-align:center}
+  .title.cc .h{font-family:'GmarketSans',sans-serif;font-weight:700;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+  .title.cc mark{background:#FFE14D;color:#111;padding:6px 18px 0;border-radius:14px;display:inline-block;transform:rotate(-2deg);text-shadow:none}
+  .speed{position:absolute;left:0;top:240px;width:1080px;height:420px}
+  .capcc{position:absolute;left:468px;top:1385px;transform:translateX(-50%);font-weight:900;font-size:var(--cs,80px);line-height:1.2;letter-spacing:-0.03em;color:#fff;
+    -webkit-text-stroke:11px #000;paint-order:stroke fill;white-space:nowrap}
+  .capcc .bx{background:#3BFF8A;color:#000;-webkit-text-stroke:0;padding:0 14px;margin:0 6px;border-radius:12px;display:inline-block}
+  .capcc .k{color:#FFE14D}
+  .emo{position:absolute;font-family:'Noto Color Emoji','Segoe UI Emoji',sans-serif;line-height:1}
+  .stk{position:absolute;font-family:'GmarketSans',sans-serif;font-weight:700;font-size:62px;line-height:1;background:#fff;color:#111;padding:26px 34px 20px;
+    border-radius:20px;box-shadow:8px 8px 0 rgba(0,0,0,.5);white-space:nowrap}
+  .stk .emo{position:static;display:inline-block;margin-right:12px;vertical-align:-6px}
+  .stamp{position:absolute;font-weight:900;font-size:170px;line-height:1;color:#FF3B3B;-webkit-text-stroke:9px #fff;paint-order:stroke fill}
+  .search{position:absolute;left:80px;right:110px;background:#fff;border-radius:999px;padding:24px 36px;font-weight:700;font-size:44px;color:#333;
+    display:flex;gap:18px;align-items:center;box-shadow:0 14px 30px rgba(0,0,0,.4);white-space:nowrap}
+  .search b{color:#FF0033}
+  .glt{position:absolute;left:0;right:110px;text-align:center;font-family:'GmarketSans',sans-serif;font-weight:700;font-size:180px;line-height:1;letter-spacing:-0.04em;color:#fff}
+  .glt span{position:absolute;left:0;right:0;top:0}
+  .glt .a{color:#ff2a55;mix-blend-mode:screen}.glt .b{color:#14e1ff;mix-blend-mode:screen}
+  .lab{position:absolute;font-weight:900;font-size:60px;color:#fff;background:#FF3B3B;padding:6px 20px;border-radius:12px;white-space:nowrap}
+  .big{position:absolute;left:0;right:110px;text-align:center;font-family:'GmarketSans',sans-serif;font-weight:700;font-size:170px;line-height:1.05;color:#FFE14D;
+    letter-spacing:-0.05em;-webkit-text-stroke:14px #000;paint-order:stroke fill}
+  .big small{display:block;font-size:60px;color:#fff;margin-bottom:20px}
+  .burst{position:absolute;left:485px;transform:translate(-50%,-50%)}
+  .lst{position:absolute;left:60px;right:120px;top:250px;display:flex;flex-direction:column;gap:22px}
+  .lst div{display:flex;align-items:center;gap:26px;background:rgba(30,30,30,.82);border-radius:22px;padding:22px 28px;font-family:'GmarketSans',sans-serif;font-weight:700;font-size:50px;color:#ccc;transform-origin:0 50%}
+  .lst div i{font-style:normal;width:76px;height:76px;border-radius:50%;background:#444;color:#fff;font-size:44px;line-height:82px;text-align:center;flex:none}
+  .lst div.on{background:#FFE14D;color:#111} .lst div.on i{background:#111;color:#FFE14D}
+  .lst div .emo{position:static;margin-left:auto;font-size:58px}
+  .odo{position:absolute;left:0;right:110px;top:250px;text-align:center;font-family:'GmarketSans',sans-serif;font-weight:700}
+  .odo .n{font-size:230px;line-height:1;color:#FFE14D;-webkit-text-stroke:12px #000;paint-order:stroke fill}
+  .odo .n small{font-size:90px;color:#fff}
+  .odo .to{font-size:64px;margin-top:14px;color:#fff;-webkit-text-stroke:8px #000;paint-order:stroke fill}
+  .odo .to b{background:#FFE14D;color:#111;padding:8px 20px 0;border-radius:12px;-webkit-text-stroke:0}
+  .subs{position:absolute;background:#FF0033;color:#fff;font-weight:900;font-size:56px;padding:22px 44px;border-radius:18px;box-shadow:0 10px 0 #a00;white-space:nowrap}
+  .hd{position:absolute;font-family:'East Sea Dokdo',cursive;font-size:100px;line-height:1;color:#FFE14D;white-space:nowrap;text-shadow:0 0 12px rgba(0,0,0,.8)}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=block">
+<style>
+  @font-face{font-family:'GmarketSans';font-weight:500;src:url(https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff) format('woff')}
+  @font-face{font-family:'GmarketSans';font-weight:700;src:url(https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff) format('woff')}
+</style></head>
+<body><div id="board"></div><div id="stage"></div>
+<script>
+const cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), eo=x=>1-Math.pow(1-cl(x),3);
+const easeBack=x=>{x=cl(x);const c=1.6;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const div=(cls,html,st)=>{const d=document.createElement("div");d.className=cls;if(html!=null)d.innerHTML=html;if(st)d.setAttribute("style",st);return d};
+window.boardOnly=on=>{document.body.classList.toggle("bg",!!on)};
+// state = {seg:{layout,titles,graphic,pip,cta}, ts: 구간 안 시각, cap:{words,on}}
+window.render=s=>{
+  const R=document.getElementById("stage"); R.innerHTML=""; const g=s.seg, ts=s.ts;
+  const cc=g.style==="cc";
+  // 제목: titles=[{t,t1,html,chip,size,speed}] — 마지막으로 시작된 것 하나. cc 면 G마켓 산스 + 튕김(팝) + 속도선
+  const cur=(g.titles||[]).filter(x=>ts>=x.t&&(x.t1==null||ts<x.t1)).pop();
+  if(cur){ const k=eo((ts-cur.t)/.35); const d=div("title"+(cc?" cc":""),(cur.chip?`<span class="chip">${cur.chip}</span>`:"")+`<div class="h" style="font-size:${cur.size||88}px">${cur.html}</div>`);
+    if(cc){ const q=easeBack(cl((ts-cur.t)/.3)); d.style.opacity=cl(q*1.5); d.style.transform=`scale(${.6+.4*q})`; d.style.transformOrigin="50% 40%"; }
+    else { d.style.opacity=k; d.style.transform=`translateY(${(1-k)*24}px)`; }
+    R.appendChild(d);
+    if(cur.speed){ const on=Math.floor(ts*12)%2?.9:.55; R.insertAdjacentHTML("beforeend",`<svg class="speed" viewBox="0 0 1080 420" style="opacity:${on*cl((ts-cur.t)/.2)}"><g stroke="#fff" stroke-width="8" stroke-linecap="round">`+
+      `<line x1="40" y1="60" x2="120" y2="110"/><line x1="20" y1="200" x2="110" y2="200"/><line x1="40" y1="340" x2="120" y2="290"/><line x1="1040" y1="60" x2="960" y2="110"/><line x1="1060" y1="200" x2="970" y2="200"/><line x1="1040" y1="340" x2="960" y2="290"/></g></svg>`); } }
+  // 캡컷식 효과 fx=[{type,t,t1,...}] — 구간 안 시각
+  for(const f of g.fx||[]){ if(ts<f.t||(f.t1!=null&&ts>=f.t1)) continue; const a=ts-f.t, q=easeBack(cl(a/.35)), o=cl(q*1.5);
+    const pos=`left:${f.x??0}px;top:${f.y??0}px;`;
+    if(f.type==="emoji"){ R.appendChild(div("emo",f.ch,pos+`font-size:${f.size||130}px;opacity:${o};transform:scale(${q}) rotate(${(f.rot??10)+Math.sin(a*6)*4}deg)`)); }
+    else if(f.type==="chip"){ R.appendChild(div("stk",(f.emoji?`<span class="emo">${f.emoji}</span>`:"")+f.html,pos+`opacity:${o};transform:scale(${.5+.5*q}) rotate(${f.rot??0}deg)`)); }
+    else if(f.type==="stamp"){ const k=eo(cl(a/.18)), S=f.size||240;   // 굵은 빨간 ✕ (흰 테두리) — 쾅 하고 내려찍힘
+      R.insertAdjacentHTML("beforeend",`<svg style="position:absolute;left:${f.x}px;top:${f.y}px;opacity:${cl(a/.08)};transform:scale(${2.2-1.2*k}) rotate(${f.rot??-8}deg)" width="${S}" height="${S}" viewBox="0 0 100 100">`+
+        `<path d="M18 18 L82 82 M82 18 L18 82" stroke="#fff" stroke-width="26" stroke-linecap="round"/><path d="M18 18 L82 82 M82 18 L18 82" stroke="#FF3B3B" stroke-width="16" stroke-linecap="round"/></svg>`); }
+    else if(f.type==="search"){ const k=eo(a/.35); R.appendChild(div("search",f.html,`top:${(f.y??560)-(1-k)*40}px;opacity:${k}`)); }
+    else if(f.type==="glitch_text"){ const j=(n)=>Math.round(Math.sin(a*97+n)*10); R.appendChild(div("glt",`<span class="a" style="transform:translate(${-8+j(1)}px,${j(2)/2}px)">${f.text}</span><span class="b" style="transform:translate(${8+j(3)}px,${j(4)/2}px)">${f.text}</span><span>${f.text}</span>`,
+        `top:${f.y??330}px;opacity:${cl(a/.05)}`)); }
+    else if(f.type==="label"){ R.appendChild(div("lab",f.text,pos+`opacity:${o};transform:scale(${q}) rotate(${f.rot??8}deg)${f.color?`;background:${f.color}`:""}`)); }
+    else if(f.type==="big"){ const y=f.y??460; R.insertAdjacentHTML("beforeend",`<svg class="burst" width="900" height="560" viewBox="-450 -280 900 560" style="top:${y+40}px;transform:translate(-50%,-50%) scale(${.3+.7*q}) rotate(${a*6}deg);opacity:${o}"><polygon fill="${f.burst||"#FF3B3B"}" points="0,-270 60,-120 200,-220 140,-60 430,-90 180,20 400,180 110,110 60,270 -20,130 -170,250 -140,80 -420,120 -190,-10 -400,-170 -130,-110 -170,-260 -40,-130"/></svg>`);
+      R.appendChild(div("big",(f.small?`<small>${f.small}</small>`:"")+f.html,`top:${y-170}px;opacity:${o};transform:scale(${.6+.4*q})`)); }
+    else if(f.type==="list"){ const its=f.items||[]; let on=-1; its.forEach((it,i)=>{ if(ts>=it.t) on=i; });
+      const d=div("lst",its.map((it,i)=>{ if(ts<it.t) return ""; const k=easeBack(cl((ts-it.t)/.35));
+        return `<div class="${i===on?"on":""}" style="opacity:${cl(k*1.5)};transform:scale(${(.6+.4*k)*(i===on?1.04:1)})"><i>${i+1}</i>${it.text}${it.emoji?`<span class="emo">${it.emoji}</span>`:""}</div>`}).join(""));
+      if(f.y!=null) d.style.top=f.y+"px"; R.appendChild(d); }
+    else if(f.type==="odo"){ const k=eo(a/(f.dur||1.2)), n=Math.round((f.value||0)*k), bump=1+.08*Math.max(0,Math.sin(a*30))*(1-k);
+      const to=f.to_html&&ts>=(f.to_at??f.t+1.6)?`<div class="to" style="opacity:${eo((ts-(f.to_at??f.t+1.6))/.3)}">${f.to_html}</div>`:"";
+      R.appendChild(div("odo",`<div class="n" style="transform:scale(${bump})">${n}<small>${f.unit||""}</small></div>${to}`,`top:${f.y??250}px;opacity:${cl(a/.2)}`)); }
+    else if(f.type==="subscribe"){ R.appendChild(div("subs",f.html||"▶ 구독",pos+`opacity:${o};transform:scale(${q}) rotate(${f.rot??-3}deg)`)); }
+    else if(f.type==="arrow"){ const k=eo(a/.5), L=320;
+      R.insertAdjacentHTML("beforeend",`<svg style="position:absolute;left:${f.x}px;top:${f.y}px" width="260" height="200" viewBox="0 0 260 200"><path d="M20 30 C 90 10, 160 60, 200 150" fill="none" stroke="#FFE14D" stroke-width="10" stroke-linecap="round" stroke-dasharray="${L}" stroke-dashoffset="${L*(1-k)}"/>`+
+        (k>.85?`<path d="M168 140 L 205 160 L 222 118" fill="none" stroke="#FFE14D" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>`:"")+`</svg>`);
+      if(f.text) R.appendChild(div("hd",f.text,`left:${f.x-60}px;top:${f.y-90}px;opacity:${cl(a/.3)};transform:rotate(-8deg)`)); }
+  }
+  const G=g.graphic||{};
+  if(G.type==="doc"){ const q=eo((ts-.1)/.55), hk=eo((ts-(G.hl_at??2.2))/.5);
+    const rows=(G.rows||[]).map(r=>`<div class="r"><span>${r}</span><span class="blur">₩ 12,345,678</span></div>`).join("");
+    const d=div("doc",`<div class="h">${G.title} <span class="ex">예시 화면</span></div>${rows}<div class="tot"><i style="width:${hk*100}%"></i><span>합계</span><span class="blur">₩ 98,765,432</span></div>`);
+    d.style.opacity=q; d.style.transform=`translateY(${(1-q)*80}px) rotate(${-3*q}deg)`; R.appendChild(d);
+    if(G.hand&&ts>=(G.hand_at??1.5)){ const h=div("hand",G.hand,`left:500px;top:260px;font-size:96px;transform:rotate(-8deg);opacity:${eo((ts-(G.hand_at??1.5))/.3)}`); R.appendChild(h); }
+    R.appendChild(div("split-line","",`top:${g.split_y||900}px`)); }
+  if(G.type==="chart"){ const t1=div("",`<span class="chip">${G.chip||""}</span><div style="font-weight:900;font-size:76px;margin-top:18px;letter-spacing:-0.03em">${G.title}</div>`,
+      `position:absolute;left:80px;top:540px;opacity:${eo(ts/.4)}`); R.appendChild(t1);
+    const c=div("chart"); (G.values||[]).forEach((v,i)=>{ const q=eo((ts-.3-i*.12)/.5); const cc=G.colors?.[i]||"rgba(244,242,236,.35)";
+      c.appendChild(div("","",`height:${v*q}%;background:${cc}`)); }); R.appendChild(c);
+    R.appendChild(div("",`${G.note||""} <span style="border:2px solid rgba(156,151,142,.6);border-radius:4px;padding:1px 8px;font-size:22px">예시</span>`,
+      `position:absolute;left:80px;top:1200px;font-size:30px;color:var(--muted);font-weight:600;opacity:${eo((ts-1)/.4)}`)); }
+  if(g.pip){ const p=g.pip, k=eo(ts/.35); R.appendChild(div("ring","",`left:${p.x-6}px;top:${p.y-6}px;width:${p.size+12}px;height:${p.size+12}px;opacity:${k}`)); }
+  if(g.cta&&ts>=(g.cta.at||0)){ const k=easeBack(cl((ts-(g.cta.at||0))/.4)); R.appendChild(div("cta",g.cta.html,`top:${g.cta.y||520}px;transform:scale(${k});transform-origin:0 50%`)); }
+  // 말자막: 지금 말하는 낱말 형광펜
+  // cc: 흰 글자 + 검정 테두리. cap_mode "box" = 지금 낱말 초록 상자(튕김) · "karaoke" = 말한 낱말까지 노랗게
+  if(s.cap&&cc){ const m=g.cap_mode||"box", pk=easeBack(cl((s.cap.since??1)/.18));
+    R.appendChild(div("capcc",s.cap.words.map((w,i)=>m==="karaoke"?(i<=s.cap.on?`<span class="k">${w}</span>`:w):(i===s.cap.on?`<span class="bx" style="transform:scale(${1+.12*pk}) rotate(-2deg)">${w}</span>`:w)).join(" "),
+      g.cap_size?`--cs:${g.cap_size}px`:null)); }
+  else if(s.cap){ R.appendChild(div("cap",s.cap.words.map((w,i)=>i===s.cap.on?`<b>${w}</b>`:w).join(" "))); }
+  return R.innerHTML;
+};
+</script></body></html>

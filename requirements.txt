@@ -1,0 +1,5 @@
+av>=12
+opencv-python-headless>=4.8
+numpy>=1.26
+playwright>=1.44
+imageio-ffmpeg>=0.5

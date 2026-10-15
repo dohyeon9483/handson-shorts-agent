@@ -1,0 +1,10 @@
+# 강의 영상·받아쓰기는 레포에 올리지 않는다(강사 동의 범위: 세미나 참여자 배포만). 노션에서 받는다.
+media/*
+!media/README.md
+out/*
+!out/.gitkeep
+work/*
+!work/.gitkeep
+__pycache__/
+*.pyc
+.DS_Store
