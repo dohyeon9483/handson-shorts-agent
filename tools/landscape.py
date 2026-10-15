@@ -679,7 +679,7 @@ def main(spec_path, plan=None):
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="가로 강의 2종: night / elearn (30초 이하)")
+    ap = argparse.ArgumentParser(description="가로 강의 양식 2종: night / elearn (30초 이하)")
     ap.add_argument("spec")
     ap.add_argument("--preview", action="store_true", help="정지 JPG만 생성")
     ap.add_argument("--at", type=float, nargs="+", help="미리보기 시각(구간 상대 초)")
