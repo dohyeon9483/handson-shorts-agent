@@ -97,6 +97,6 @@ python tools/shorts.py work/<이름>.json --fps 15       # 급할 때(절반 정
 말자막은 y 1420 근처 가운데 · 오른쪽 192px 은 버튼 자리라 비운다. fx 의 `x`,`y` 도 이 범위를 지킨다.
 
 ## 막힐 때
-- `python tools/check_env.py` — 무엇이 빠졌는지 알려 준다. 결과를 사람에게 보여 주고 묻는다(직접 설치하지 않는다).
+- `python tools/check_env.py` — 무엇이 빠졌는지 알려 준다. 결과를 보여 주고, 참여자가 준비를 요청했으면 AGENTS.md '실습 준비 요청' 순서로 고친다.
 - 렌더가 너무 느리면 `--fps 15`, 또는 구간을 줄인다.
 - 급하면 `media/checkpoints/` 의 spec 을 그대로 렌더해 결과를 먼저 보고 거기서 고친다.

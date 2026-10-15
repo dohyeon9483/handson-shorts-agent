@@ -38,7 +38,22 @@ Claude Code·Codex 등 에이전트는 작업 전에 **`.claude/skills/shorts-ma
 | `media/examples/*.json` | 완성 예시 spec(기본형·캡컷식) |
 | `media/checkpoints/*.json` | 렌더만 하면 되는 spec(막혔을 때) |
 
-`media/` 가 비어 있으면 작업하지 말고 "노션 가이드의 샘플 묶음을 media/ 에 넣어 주세요" 라고 안내한다.
+`media/` 가 비어 있으면 아래 '실습 준비 요청' 1번처럼 다운로드 폴더의 샘플 묶음을 찾아 풀겠다고 제안한다(없으면 노션에서 받아 달라고 안내).
+
+## 실습 준비 요청 — "실습 준비를 해 줘"
+
+참여자가 준비(설치)를 요청하면 아래 순서로 **직접 해 준다**. 명령마다 무엇을 하는지 한 줄로 말하고 진행한다.
+
+1. **샘플 묶음**: `media/OT_촬영본.mp4` 가 없으면 다운로드 폴더(`~/Downloads`, Windows `%USERPROFILE%\Downloads`)에서 `노션배포_샘플묶음*.zip` 을 찾아 **`media/` 에 바로** 푼다(파이썬 `zipfile` 로 풀면 한글 파일 이름이 깨지지 않는다). 못 찾으면 노션에서 받아 달라고 한다.
+2. **Python 3.10 이상**: `python --version`(Mac `python3`). 없으면
+   - Windows: `winget install -e --id Python.Python.3.12` (winget 이 없으면 python.org 설치 안내 — *Add to PATH* 체크)
+   - Mac: `brew install python@3.12` (brew 가 없으면 python.org 설치 안내)
+   설치 뒤 PATH 가 안 잡히면 Claude Code 를 다시 열어 달라고 한다.
+3. **패키지**: `python -m pip install -r requirements.txt` → `python -m playwright install chromium`(150MB)
+4. **점검**: `python tools/check_env.py --smoke` — 결과 표를 그대로 보여 주고, ❌ 는 줄 끝 → 안내대로 고친 뒤 다시 점검한다.
+5. 모두 ✅ 면 "준비 끝. 당일에는 README 3장의 ① 문장부터 보내면 됩니다." 라고 마무리한다.
+
+회사 보안 정책(관리자 권한·설치 차단)으로 막히면 억지로 우회하지 말고 그대로 알린다.
 
 ## 규칙
 
@@ -47,7 +62,7 @@ Claude Code·Codex 등 에이전트는 작업 전에 **`.claude/skills/shorts-ma
 3. **렌더 전에 항상 `--preview` 로 한 장을 먼저 보여 준다.** 렌더는 몇 분 걸린다.
 4. **고른 안만 렌더한다.** 기획안을 여러 개 낼 때 전부 렌더하지 않는다.
 5. 화면에 넣는 숫자·정산서·그래프가 실제 자료가 아니면 예시임을 밝힌다(`doc`·`chart` 그래픽은 '예시' 표시가 자동으로 붙는다).
-6. 외부 업로드·공유·설치는 하지 않는다. 설치 문제는 `python tools/check_env.py` 결과를 보여 주고 사람에게 묻는다.
+6. 외부 업로드·공유는 하지 않는다. 설치는 참여자가 **준비를 요청했을 때만** 위 '실습 준비 요청' 순서로 한다(그 밖의 프로그램은 설치하지 않는다).
    예외: 참여자가 자기 영상의 받아쓰기를 요청하면 `python tools/transcribe.py media/<영상>.mp4` 를 돌린다(faster-whisper 가 없으면 `pip install -r requirements-transcribe.txt` 를 알려 주고 허락을 받는다). 받아쓴 뒤 고유명사가 맞는지 참여자에게 확인한다.
 7. 이 강의 영상은 **세미나 실습용**이다. 결과물을 외부(SNS 등)에 올리지 말라고 안내한다.
 8. 시간이 빠듯한 실습이다. 렌더 전에 예상 시간을 말하고(기본형 20초 ≈ 2~4분, 캡컷식 30초 ≈ 4~8분(노트북·GPU 없음 기준)), 길면 기본형·20초를 권한다.
