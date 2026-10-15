@@ -18,6 +18,7 @@ from pathlib import Path
 
 import av, cv2, numpy as np
 from playwright.sync_api import sync_playwright
+from subtitles import read_vtt
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -90,6 +91,20 @@ def caption_chunks(words, max_chars=14):
 
 
 def build_timeline(spec, base):
+    if spec.get("vtt") and not spec.get("words"):
+        cues = read_vtt(resolve(spec["vtt"], base))
+        segs, t = [], 0.0
+        for g in spec["segments"]:
+            dur = g["out"] - g["in"]
+            caps = [dict(s=t + max(c["s"], g["in"]) - g["in"],
+                         e=t + min(c["e"], g["out"]) - g["in"],
+                         words=c["text"].split(), plain=True)
+                    for c in cues if c["s"] < g["out"] and c["e"] > g["in"]]
+            segs.append(dict(g, t0=t, t1=t+dur, caps=caps, cap_mode="plain"))
+            t += dur
+        return segs, t
+    if not spec.get("words"):
+        raise ValueError("vtt 또는 words 자막 경로가 필요합니다.")
     d = json.loads(resolve(spec["words"], base).read_text(encoding="utf-8"))
     rep = spec.get("replace", {})
     segs, t = [], 0.0
@@ -224,6 +239,10 @@ class Frame:
         self.cache_dom, self.cache, self.shots = None, None, 0
 
     def compose(self, g, cur, ts, idx):
+        # All crop coordinates use the common 1920×1080 reference canvas.
+        if cur is None:
+            raise ValueError("영상 프레임을 읽지 못했습니다.")
+        cur = cv2.resize(cur, (1920, 1080), interpolation=cv2.INTER_AREA)
         tl = g["t0"] + ts
         canvas = self.board.copy()
         lay = g.get("layout", "speaker")
@@ -239,6 +258,8 @@ class Frame:
         capst = None                                   # 말자막: 지금 말하는 낱말
         for c in g["caps"]:
             if c["s"] <= tl < c["e"] + 1e-6:
+                if c.get("plain"):
+                    capst = {"words": c["words"], "on": -1, "plain": True}; break
                 on = max([j for j, s0 in enumerate(c["ws"]) if s0 <= tl + .05] or [0])
                 capst = {"words": c["words"], "on": on, "since": round(tl - c["ws"][on], 3)}; break
         seg_js = {k: g.get(k) for k in ("layout", "titles", "graphic", "pip", "cta", "split_y", "style", "fx", "cap_mode", "cap_size") if g.get(k) is not None}
@@ -351,27 +372,48 @@ def load(spec_path):
     spec = json.loads(spec_path.read_text(encoding="utf-8"))
     src, out = resolve(spec["src"], base), resolve(spec["out"], base)
     if not src.exists():
-        sys.exit(f"원본 영상이 없습니다: {src}\n  → media/ 폴더에 OT_촬영본.mp4 를 넣었는지 확인하세요(README 참고).")
+        sys.exit(f"원본 영상이 없습니다: {src}\n  → spec의 src 경로와 media/ 안의 실제 파일을 확인하세요.")
+    if src.resolve() == out.resolve():
+        raise ValueError("출력 경로는 원본과 달라야 합니다.")
     out.parent.mkdir(parents=True, exist_ok=True)
     segs, total = build_timeline(spec, base)
+    if not segs or not 0 < total <= 30.001:
+        raise ValueError("실습 영상은 0초 초과, 30초 이하여야 합니다.")
+    with av.open(str(src)) as video:
+        duration = float(video.duration / av.time_base)
+        if not video.streams.audio:
+            raise ValueError("음성 트랙이 없는 영상입니다.")
+    if any(not 0 <= g['in'] < g['out'] <= duration + .05 for g in segs):
+        raise ValueError("원본 길이를 벗어나는 구간이 있습니다.")
     return spec, src, out, segs, total
 
 
-def preview(spec_path):
+def preview(spec_path, at=None):
     """구간마다 가운데쯤 한 장 → 가로로 이어 붙인 미리보기 jpg. 렌더 전에 배치·제목을 확인하는 용도."""
     spec, src, out, segs, total = load(spec_path)
     t0 = time.time(); tiles = []
     with sync_playwright() as p:
         b, page, board = open_page(p); fr = Frame(page, board, total)
         cin = av.open(str(src)); vs = cin.streams.video[0]
-        for k, g in enumerate(segs):
+        selections = []
+        if at is not None:
+            if not at or not all(np.isfinite(t) and 0 <= t < total for t in at):
+                raise ValueError("--at 은 완성 영상 안의 상대 초여야 합니다.")
+            for t in at:
+                k, g = next((k, g) for k, g in enumerate(segs) if g["t0"] <= t < g["t1"])
+                selections.append((k, g, t-g["t0"]))
+        else:
+            for k, g in enumerate(segs):
+                dur = g["t1"]-g["t0"]
+                selections.extend((k, g, ts) for ts in (min(.1, dur*.1), dur/2, max(0, dur-min(.1, dur*.1))))
+        for k, g, ts in selections:
             dur = g["t1"] - g["t0"]
-            ts = min(dur - .05, max(1.2, dur * .55))      # 제목·그래픽이 다 뜬 뒤쯤
             img = fr.compose(g, frame_at(cin, vs, g["in"] + ts), ts, k)
             img = cv2.resize(img, (360, 640), interpolation=cv2.INTER_AREA)
-            cv2.putText(img, f"{k + 1}  {g['in']:.1f}-{g['out']:.1f}s", (12, 628), cv2.FONT_HERSHEY_SIMPLEX, .6, (255, 255, 255), 2)
+            cv2.putText(img, f"{k + 1}  +{g['t0']+ts:.2f}s", (12, 628), cv2.FONT_HERSHEY_SIMPLEX, .6, (255, 255, 255), 2)
             tiles.append(img)
         b.close()
+        cin.close()
     sheet = out.with_name(out.stem + "_preview.jpg")
     cv2.imencode(".jpg", np.hstack(tiles))[1].tofile(str(sheet))
     print(f"미리보기: {sheet}  ({len(segs)} 구간 · 완성 길이 {total:.1f}초 · {time.time() - t0:.0f}s)")
@@ -416,7 +458,9 @@ def render(spec_path, fps_override=None):
                     last = time.time(); el = last - t0c
                     print(f"  렌더 {done / fps:5.1f}/{total:.1f}초  ({el:.0f}s 경과, 약 {el / done * (n_all - done):.0f}s 남음)", flush=True)
         b.close()
-    enc.stdin.close(); enc.wait()
+    enc.stdin.close()
+    if enc.wait() != 0:
+        raise RuntimeError("ffmpeg 인코딩 실패 — 결과물을 사용하지 마세요.")
     ev = [(g["t0"], "whoosh") for a, g in zip(segs, segs[1:]) if a.get("layout") != g.get("layout")] if spec.get("sfx_auto", True) else []
     ev += [(g["t0"] + e["t"], e["kind"]) for g in segs for e in g.get("sfx", [])]
     if spec.get("sfx", True):
@@ -429,5 +473,8 @@ if __name__ == "__main__":
     ap.add_argument("spec")
     ap.add_argument("--preview", action="store_true", help="구간마다 정지 화면 한 장만(빠름)")
     ap.add_argument("--fps", type=int, help="렌더 fps 를 낮춰 빠르게(예: 15)")
+    ap.add_argument("--at", type=float, nargs="+", help="미리보기: 완성 영상 기준 상대 초")
     a = ap.parse_args()
-    preview(a.spec) if a.preview else render(a.spec, a.fps)
+    if a.at and not a.preview:
+        ap.error("--at 은 --preview 와 함께 사용하세요.")
+    preview(a.spec, a.at) if a.preview else render(a.spec, a.fps)

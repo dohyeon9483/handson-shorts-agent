@@ -25,6 +25,7 @@ def ts(t):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("video"); ap.add_argument("--model", default="small"); ap.add_argument("--lang", default="ko"); ap.add_argument("--gpu", action="store_true", help="NVIDIA GPU 로(실패하면 CPU)")
+    ap.add_argument("--out-dir", help="파생 자막 저장 폴더. 생략하면 work/sources/<영상명>")
     a = ap.parse_args()
     try:
         from faster_whisper import WhisperModel
@@ -33,6 +34,11 @@ def main():
     src = Path(a.video)
     if not src.exists():
         sys.exit(f"파일이 없습니다: {src}")
+    outdir = Path(a.out_dir) if a.out_dir else Path(__file__).resolve().parent.parent / "work" / "sources" / src.stem
+    base = outdir / src.stem
+    outputs = [Path(f"{base}.words.json"), Path(f"{base}.vtt")]
+    if any(p.exists() for p in outputs):
+        sys.exit("이미 받아쓰기가 있습니다. 기존 파일을 보존합니다. 새 --out-dir 을 지정하세요.")
     def run(dev, ct):
         model = WhisperModel(a.model, device=dev, compute_type=ct); print(f"모델 {a.model} · {dev}")
         segs, _ = model.transcribe(str(src), language=a.lang, word_timestamps=True, vad_filter=True,
@@ -52,12 +58,12 @@ def main():
         if not a.gpu:
             sys.exit(f"받아쓰기 실패: {e}")
         print(f"GPU 로 안 됨({type(e).__name__}) → CPU 로 다시 합니다"); out_segs, words = run("cpu", "int8")
-    base = src.with_suffix("")
+    outdir.mkdir(parents=True, exist_ok=True)
     Path(f"{base}.words.json").write_text(json.dumps({"clip": src.stem, "segments": out_segs, "words": words}, ensure_ascii=False, indent=1), encoding="utf-8")
     vtt = ["WEBVTT", ""] + [f"{ts(s['start'])} --> {ts(s['end'])}\n{s['text'].strip()}\n" for s in out_segs]
     Path(f"{base}.vtt").write_text("\n".join(vtt), encoding="utf-8")
     print(f"\n완료: {base}.vtt · {base}.words.json  (문장 {len(out_segs)} · 낱말 {len(words)})")
-    print("다음: 받아쓰기를 읽고 틀린 고유명사를 확인하세요. 에이전트에게 \"이 영상으로 쇼츠 기획안 3개\" 라고 말하면 됩니다.")
+    print("다음: 고유명사를 확인하고, 선택한 양식으로 30초 편집안 하나를 요청하세요.")
 
 
 if __name__ == "__main__":

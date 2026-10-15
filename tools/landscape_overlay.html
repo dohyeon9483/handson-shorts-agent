@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<!-- 손글씨 주석(hand) 글꼴 East Sea Dokdo · 이러닝(elearn) 테마 글꼴 Noto Sans KR(본고딕, 말자막) · G마켓 산스(제목·칩·키네틱).
+     Pretendard 통일 규칙은 2026-10-15 폐지 — 테마마다 레퍼런스에 맞는 글꼴(상업 이용 가능한 무료 글꼴만) -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&family=Noto+Sans+KR:wght@400;500;700;900&display=block">
+<style>
+  @font-face{font-family:'GmarketSans';font-weight:300;src:url(https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff) format('woff')}
+  @font-face{font-family:'GmarketSans';font-weight:500;src:url(https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff) format('woff')}
+  @font-face{font-family:'GmarketSans';font-weight:700;src:url(https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff) format('woff')}
+  :root{ --red:#E65347; --red2:#F7585C; --ink:#1B1A18; --muted:#6B645C; --paper:#FFFFFF; --pink:#FDE3E4;
+    /* 테마 토큰 (기본값 = 예전 코랄 디자인과 똑같이) — 2026-10-11 */
+    --mk:#E65347; --mk-soft:rgba(230,83,71,.25); --mk-ring:rgba(230,83,71,.3); --hl:rgba(255,214,10,.42);
+    --n-ink:#1B1A18; --n-muted:#6B645C; --n-key:#E65347; --n-key-fg:#fff; --n-line:rgba(27,26,24,.85);
+    --n-card-line:rgba(27,26,24,.25); --board-bg:#F5F3EF; --veil:rgba(250,249,247,.86); --hdr-bg:rgba(255,255,255,.96);
+    --node-bg:#fff; --f-head:'Pretendard',sans-serif; --f-body:'Pretendard',sans-serif; --f-hand:'Pretendard',sans-serif;
+    --head-w:800; --hand-w:800; --hand-size:44px; }
+  /* ---- night 테마: 차콜 질감 · 노란 칩 · 빨간 주석 (spec "theme":"night"). 글꼴은 Pretendard 로 통일(2026-10-12 사용자 지시) ---- */
+  body[data-theme=night]{
+    --tex:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    --mk:#FF4433; --mk-soft:rgba(255,68,51,.22); --mk-ring:rgba(255,68,51,.3); --hl:rgba(255,212,0,.40);
+    --n-ink:#F4F2EC; --n-muted:#9C978E; --n-key:#FFD400; --n-key-fg:#111; --n-line:rgba(244,242,236,.85);
+    --n-card-line:rgba(244,242,236,.8); --board-bg:var(--tex),radial-gradient(ellipse at 50% 40%,#262626 0%,#121212 75%);
+    --veil:var(--tex),rgba(12,12,12,.84); --hdr-bg:rgba(18,18,18,.88); --node-bg:#151515;
+    --head-w:900; --f-hand:'East Sea Dokdo',cursive; --hand-w:400; --hand-size:70px; }
+  body[data-theme=night] .tag{background:var(--n-key);color:var(--n-key-fg);font-family:var(--f-head);font-weight:800;border-radius:4px;
+    box-shadow:0 6px 16px rgba(0,0,0,.35)}
+  body[data-theme=night] .tag::after{border-top-color:var(--n-key)}
+  body[data-theme=night] .tag.below::after{border-top-color:transparent;border-bottom-color:var(--n-key)}
+  body[data-theme=night] .cap{background:var(--tex),#151515;color:var(--n-ink);font-family:var(--f-body);box-shadow:0 14px 40px rgba(0,0,0,.45)}
+  body[data-theme=night] .cap::before{background:var(--n-key)}
+  body[data-theme=night] .cap em{color:var(--n-key)}
+  body[data-theme=night] .cap.v2 .k,body[data-theme=night] .cap.v2 .ar{color:var(--n-key)}
+  body[data-theme=night] .cap.v2 .chip{background:rgba(255,255,255,.12);color:var(--n-ink)}
+  body[data-theme=night] .cap.v2.k-steps .chip{background:rgba(255,255,255,.08)}
+  body[data-theme=night] .cap.v2 .chip.on,body[data-theme=night] .cap.v2.k-steps .chip.on{background:var(--n-key);color:var(--n-key-fg)}
+  body[data-theme=night] .cap.v2 .kick{background:var(--n-key);color:var(--n-key-fg)}
+  body[data-theme=night] .cap.v2.k-title{background:var(--n-key);color:var(--n-key-fg)}
+  body[data-theme=night] .cap.v2.k-title em{color:#B3261E}
+  body[data-theme=night] .cap.v2.k-title .kick{background:#111;color:var(--n-key)}
+  body[data-theme=night] .cap.v2 .tg.t1{background:rgba(255,255,255,.12);color:var(--n-muted)}
+  body[data-theme=night] .cap.v2 .tg.t2{background:var(--mk);color:#fff}
+  body[data-theme=night] .cap.v2 .bad{color:var(--n-muted)}
+  body[data-theme=night] .ref{background:var(--tex),#151515;border:2px solid var(--n-card-line);border-radius:6px;color:var(--n-ink);
+    font-family:var(--f-body);box-shadow:0 18px 48px rgba(0,0,0,.4)}
+  body[data-theme=night] .ref .chip{background:var(--n-key);color:var(--n-key-fg);font-family:var(--f-head);font-weight:800;border-radius:4px}
+  body[data-theme=night] .ref .ttl{font-family:var(--f-head);font-weight:900;letter-spacing:-0.02em}
+  body[data-theme=night] .ref .body{color:var(--n-muted)}
+  body[data-theme=night] .ref .url{color:var(--n-key)}
+  body[data-theme=night] .ref img{border-radius:4px}
+  /* ---- elearn 테마: 한국 이러닝 문법(밝은 바탕·브랜드 코랄 + 네이비·빨간 판서) — 2026-10-15
+     근거: 작업물/_리서치_이러닝_쇼츠/세부비교 (K-MOOC·크로마키 프리미엄·고려사이버대 실측) ---- */
+  body[data-theme=elearn]{
+    --mk:#E2372B; --mk-soft:rgba(226,55,43,.18); --mk-ring:rgba(226,55,43,.25); --hl:rgba(249,242,175,.95);
+    --n-ink:#1B2233; --n-muted:#5A6375; --n-key:#E65347; --n-key-fg:#fff; --n-line:rgba(36,50,79,.75); --navy:#24324F;
+    --n-card-line:rgba(36,50,79,.18); --board-bg:linear-gradient(120deg,#FFFFFF 0%,#F1F2F5 100%); --veil:rgba(244,245,247,.93);
+    --hdr-bg:#fff; --node-bg:#fff; --head-w:700; --f-head:'GmarketSans',sans-serif; --f-body:'Pretendard',sans-serif;
+    --f-sub:'Noto Sans KR',sans-serif; --f-hand:'East Sea Dokdo',cursive; --hand-w:400; --hand-size:72px;
+    --hard:#AEB3BD; }
+  body[data-theme=elearn] .n-chip{border-radius:6px;font-weight:700;padding:8px 18px 6px}
+  body[data-theme=elearn] .n-hand{color:var(--mk)}
+  body[data-theme=elearn] .n-panel2{background:#fff;box-shadow:8px 8px 0 var(--hard)}
+  body[data-theme=elearn] .n-chart .bar:not(.hi):not(.lo){background:#C9CED8}
+  body[data-theme=elearn] .n-toc .cell{border-color:rgba(36,50,79,.2)}
+  body[data-theme=elearn] .n-card{border-color:rgba(36,50,79,.25);color:var(--n-muted);background:#fff}
+  body[data-theme=elearn] .n-card.on{background:#FDECEA}
+  body[data-theme=elearn] .n-vs .lab{background:#E6E8EE}
+  body[data-theme=elearn] .n-odo .d{background:#fff;border-color:rgba(36,50,79,.25)}
+  body[data-theme=elearn] .n-pipc{border-color:#fff;box-shadow:0 18px 40px rgba(20,30,60,.25)}
+  body[data-theme=elearn] .n-pipr{border:6px solid #fff;box-shadow:0 18px 40px rgba(20,30,60,.25)}
+  body[data-theme=elearn] .n-title .h,body[data-theme=elearn] .n-div .h,body[data-theme=elearn] .n-rf .h{font-family:var(--f-head);font-weight:700}
+  html,body{margin:0;width:1920px;height:1080px;background:transparent;overflow:hidden;
+    font-family:'Pretendard',sans-serif;-webkit-font-smoothing:antialiased}
+  #stage{position:absolute;inset:0}
+  svg{position:absolute;inset:0;overflow:visible}
+  .cap{position:absolute;left:50%;bottom:86px;transform-origin:50% 100%;
+    background:var(--paper);color:var(--ink);font-weight:700;font-size:44px;letter-spacing:-0.02em;
+    padding:20px 36px 22px;border-radius:18px;white-space:nowrap;
+    box-shadow:0 14px 40px rgba(0,0,0,.22),0 0 0 1px rgba(0,0,0,.04)}
+  .cap::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:7px;border-radius:0 6px 6px 0;background:var(--red)}
+  .cap em{font-style:normal;color:var(--red)}
+  .cap.top{bottom:auto;top:70px;transform-origin:50% 0}
+  .ref{position:absolute;right:56px;bottom:64px;width:520px;background:var(--paper);border-radius:20px;
+    padding:26px 30px 28px;box-shadow:0 18px 48px rgba(0,0,0,.24);color:var(--ink)}
+  .ref .chip{display:inline-block;background:var(--red);color:#fff;font-weight:700;font-size:20px;
+    padding:6px 14px;border-radius:999px;margin-bottom:14px}
+  .ref .ttl{font-weight:800;font-size:32px;letter-spacing:-0.02em;line-height:1.3}
+  .ref .body{font-size:24px;color:var(--muted);line-height:1.5;margin-top:10px}
+  .ref .url{font-size:22px;color:var(--red);font-weight:600;margin-top:14px}
+  .ref img{display:block;width:100%;max-height:470px;object-fit:cover;border-radius:12px;margin-top:14px}
+  .ref.pic{width:380px;padding:22px 24px 24px}
+  .ref.pic .ttl{font-size:28px}
+  .tag{position:absolute;background:var(--red);color:#fff;font-weight:700;font-size:26px;
+    padding:8px 16px;border-radius:10px;white-space:nowrap;box-shadow:0 8px 20px rgba(230,83,71,.35)}
+  .tag::after{content:"";position:absolute;left:22px;bottom:-9px;border:10px solid transparent;border-bottom:0;border-top-color:var(--red)}
+  .tag.below::after{bottom:auto;top:-9px;border:10px solid transparent;border-top:0;border-bottom-color:var(--red)}
+
+  /* ---- 강조자막 프리셋 (kind 가 있는 caption) — 2026-10-07 ----
+     위치: raised(기본, 플레이어 자막 위) · top · left/right(좌우 빈 공간, y 는 상자 가운데)
+     줄바꿈: html 의 <br> 로 직접 끊는다. 상자는 max-width 안에서만 접힌다 */
+  .cap.v2{font-size:48px;font-weight:800;line-height:1.28;white-space:normal;word-break:keep-all;max-width:1100px;width:max-content;
+    padding:22px 38px 24px 40px;text-align:left}
+  .cap.v2.side{max-width:620px}
+  .cap.v2.raised{bottom:170px}
+  .cap.v2.top{bottom:auto;top:70px}
+  .cap.v2.left,.cap.v2.right{bottom:auto;left:auto}
+  .cap.v2 .k{display:block;font-size:30px;font-weight:800;color:var(--red);margin-bottom:8px;letter-spacing:0}
+  .cap.v2 .chips{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center}
+  .cap.v2 .chip{background:var(--pink);color:var(--ink);border-radius:999px;padding:6px 22px 8px;font-size:40px;white-space:nowrap}
+  .cap.v2 .chip.on{background:var(--red);color:#fff}
+  .cap.v2.k-steps .chip{background:#F1EEEA}
+  .cap.v2.k-steps .chip.on{background:var(--red);color:#fff}
+  .cap.v2 .ar{color:var(--red);font-weight:800;font-size:40px}
+  .cap.v2.k-title{background:var(--ink);color:#fff}
+  .cap.v2.k-title::before{display:none}
+  .cap.v2.k-title em{color:#FF8A80}
+  .cap.v2 .kick{display:inline-block;background:var(--red);color:#fff;font-size:30px;font-weight:800;border-radius:999px;
+    padding:5px 16px 7px;margin-right:18px;vertical-align:middle;position:relative;top:-5px}
+  .cap.v2 .row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .cap.v2 .row + .row{margin-top:8px}
+  .cap.v2 .tg{font-size:26px;font-weight:800;border-radius:8px;padding:4px 12px 6px;white-space:nowrap}
+  .cap.v2 .tg.t1{background:#ECE9E5;color:var(--muted)} .cap.v2 .tg.t2{background:var(--red);color:#fff}
+  .cap.v2 .bad{color:var(--muted)}
+
+  /* ---- 구조 효과 (board·hdr·hl·hand·map·recap·kinetic) — 2026-10-11 ---- */
+  #stage mark{background:none;color:var(--n-key)}
+  .n-chip{display:inline-block;font-family:var(--f-head);font-weight:var(--head-w);font-size:28px;padding:6px 16px 8px;border-radius:4px;
+    background:var(--n-key);color:var(--n-key-fg);white-space:nowrap}
+  .n-board,.n-full,.n-veil{position:absolute;inset:0}
+  .n-board,.n-full{background:var(--board-bg)}
+  .n-veil{background:var(--veil)}
+  .n-frame{position:absolute;border:2px solid var(--n-card-line);border-radius:6px;box-sizing:border-box}
+  .n-label{position:absolute;font-family:var(--f-body);font-size:24px;font-weight:700;color:var(--n-muted);letter-spacing:.06em;white-space:nowrap}
+  .n-panel{position:absolute;color:var(--n-ink);font-family:var(--f-body)}
+  .n-steps{display:flex;flex-direction:column;gap:22px;margin-top:34px}
+  .n-st{padding:22px 30px;border:2px solid rgba(128,128,128,.35);border-radius:6px;color:var(--n-muted)}
+  .n-st .no{font-size:24px;font-weight:700}
+  .n-st .tt{font-family:var(--f-head);font-weight:var(--head-w);font-size:42px;margin-top:4px;line-height:1.2;letter-spacing:-0.02em}
+  .n-st .ds{font-size:24px;margin-top:6px}
+  .n-st.on{border-color:var(--n-key);color:var(--n-ink);background:rgba(255,212,0,.08);box-shadow:inset 8px 0 0 var(--n-key)}
+  .n-st.on .tt{color:var(--n-key)}
+  .n-hdr{position:absolute;left:44px;top:36px;display:flex;align-items:center;gap:14px;font-family:var(--f-body);font-weight:700;
+    font-size:27px;color:var(--n-ink);background:var(--hdr-bg);padding:8px 18px 8px 8px;border-radius:6px;white-space:nowrap}
+  .n-hdr .n{font-family:var(--f-head);font-weight:var(--head-w);font-size:28px;color:var(--n-key-fg);background:var(--n-key);
+    padding:2px 12px 4px;border-radius:4px}
+  .n-hdr .dots{display:flex;gap:6px;margin-left:8px}
+  .n-hdr .dots i{width:22px;height:4px;background:rgba(128,128,128,.4)}
+  .n-hdr .dots i.done{background:var(--n-ink);opacity:.7}
+  .n-hdr .dots i.on{background:var(--n-key)}
+  .n-hand{position:absolute;font-family:var(--f-hand);font-weight:var(--hand-w);color:var(--mk);font-size:var(--hand-size);line-height:1;white-space:nowrap}
+  /* 복잡한 배경(책장·화면) 위에서도 읽히게 글씨 뒤에 어두운 번짐 — 2026-10-14 */
+  body[data-theme=night] .n-hand{text-shadow:0 0 14px rgba(0,0,0,.85),0 0 4px rgba(0,0,0,.9)}
+  .n-map-head{position:absolute;left:96px;top:64px}
+  .n-map-title{font-family:var(--f-head);font-weight:var(--head-w);font-size:88px;letter-spacing:-0.03em;color:var(--n-ink);margin-top:14px;white-space:nowrap}
+  .n-map-sub{font-family:var(--f-body);font-size:30px;color:var(--n-muted);margin-top:4px}
+  .n-node{position:absolute;width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+    font-family:var(--f-head);font-weight:var(--head-w);font-size:42px;border:3px solid var(--n-line);color:var(--n-ink);background:var(--node-bg)}
+  .n-node.on{background:var(--n-key);color:var(--n-key-fg);border-color:var(--n-key);box-shadow:0 0 0 14px rgba(255,212,0,.15)}
+  .n-nl{position:absolute;width:560px;text-align:center;font-family:var(--f-body);color:var(--n-ink)}
+  .n-nl .tt{font-size:31px;font-weight:700;white-space:nowrap}
+  .n-nl .tm{font-size:22px;color:var(--n-muted);margin-top:6px}
+  .n-nl.on .tt{color:var(--n-key)}
+  .n-kin{position:absolute;left:50%;top:44%;width:1500px;text-align:center;color:var(--n-ink)}
+  .n-kin .pre{font-family:var(--f-body);font-size:40px;color:var(--n-muted);font-weight:600;margin-top:28px}
+  .n-kin .main{font-family:var(--f-head);font-weight:var(--head-w);font-size:104px;line-height:1.15;margin-top:10px;letter-spacing:-0.03em}
+  .n-kin mark{display:inline-block;position:relative}
+  .n-kin mark::after{content:"";position:absolute;left:-2%;right:-2%;bottom:-6px;height:9px;background:var(--n-key);border-radius:6px;
+    transform:rotate(-2deg) scaleX(var(--sw,1));transform-origin:0 50%}
+  .n-recap{position:absolute;left:50%;top:45%;width:1300px;color:var(--n-ink);font-family:var(--f-body)}
+  .n-recap .h{font-family:var(--f-head);font-weight:var(--head-w);font-size:76px;margin-top:20px;letter-spacing:-0.03em}
+  .n-recap .rows{margin-top:38px;display:flex;flex-direction:column;gap:26px}
+  .n-recap .row{display:flex;gap:22px;align-items:baseline;font-size:38px;font-weight:700;line-height:1.3}
+  .n-recap .row b{font-family:var(--f-head);font-weight:var(--head-w);color:var(--n-key)}
+  /* ---- 인터뷰형 효과 (lower3·side·count·chart·toc) — 2026-10-14 ----
+     강사가 화면에 나오는 촬영본용. 배경(책장 등)이 복잡하므로 글자는 늘 어두운 판 위에 */
+  .n-panel2{position:absolute;background:var(--hdr-bg);color:var(--n-ink);font-family:var(--f-body);border-radius:8px;
+    padding:26px 32px 28px;box-shadow:0 18px 44px rgba(0,0,0,.35)}
+  body[data-theme=night] .n-panel2{background:var(--tex),rgba(18,18,18,.88)}
+  .n-panel2.left{border-left:7px solid var(--n-key)} .n-panel2.right{border-right:7px solid var(--n-key)}
+  .n-panel2 .kick{display:inline-block;font-weight:800;font-size:22px;letter-spacing:.04em;padding:4px 12px 5px;border-radius:4px;
+    background:var(--n-key);color:var(--n-key-fg);margin-bottom:14px}
+  .n-panel2 .main{font-weight:var(--head-w);font-size:52px;line-height:1.22;letter-spacing:-0.03em}
+  .n-panel2 .sub{font-size:26px;color:var(--n-muted);margin-top:12px;line-height:1.45}
+  .n-panel2 .rows{display:flex;flex-direction:column;gap:16px;margin-top:6px}
+  .n-panel2 .row{display:flex;gap:16px;align-items:baseline;font-size:36px;font-weight:700;line-height:1.3}
+  .n-panel2 .row b{font-weight:var(--head-w);color:var(--n-key);min-width:30px}
+  .n-panel2 s{color:var(--n-muted);text-decoration-color:var(--mk);text-decoration-thickness:4px}
+  .n-lower3{position:absolute;left:72px;bottom:190px;display:flex;align-items:stretch;font-family:var(--f-body);color:var(--n-ink)}
+  .n-lower3 .bar{width:8px;background:var(--n-key);border-radius:2px}
+  .n-lower3 .box{background:var(--hdr-bg);padding:16px 28px 18px 22px;border-radius:0 6px 6px 0}
+  body[data-theme=night] .n-lower3 .box{background:var(--tex),rgba(18,18,18,.9)}
+  .n-lower3 .nm{font-weight:var(--head-w);font-size:54px;letter-spacing:-0.02em;line-height:1.1}
+  .n-lower3 .rl{font-size:26px;color:var(--n-muted);margin-top:6px;font-weight:600}
+  .n-count .lab{font-size:28px;font-weight:700;color:var(--n-muted)}
+  .n-count .num{font-weight:var(--head-w);font-size:112px;line-height:1;letter-spacing:-0.04em;color:var(--n-key);margin-top:8px;white-space:nowrap}
+  .n-count .num small{font-size:44px;margin-left:6px;color:var(--n-ink);letter-spacing:-0.02em}
+  .n-count .ar{font-size:64px;margin-left:12px;vertical-align:8px}
+  .n-count .ar.up{color:var(--n-key)} .n-count .ar.down{color:var(--mk)}
+  .n-chart{position:absolute;left:50%;top:47%;width:1400px;color:var(--n-ink);font-family:var(--f-body)}
+  .n-chart .h{font-weight:var(--head-w);font-size:64px;letter-spacing:-0.03em;margin-top:16px}
+  .n-chart .plot{position:relative;height:440px;margin-top:40px;border-bottom:3px solid var(--n-line);display:flex;align-items:flex-end;gap:34px;padding:0 20px}
+  .n-chart .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .n-chart .bar{width:100%;border-radius:6px 6px 0 0;background:rgba(244,242,236,.35)}
+  .n-chart .bar.hi{background:var(--n-key)} .n-chart .bar.lo{background:var(--mk)}
+  .n-chart .lb{font-size:24px;color:var(--n-muted);margin-top:12px;position:absolute;bottom:-46px}
+  .n-chart .col{position:relative}
+  .n-chart .note{font-size:30px;color:var(--n-muted);margin-top:70px}
+  .n-chart .ex{display:inline-block;font-size:20px;font-weight:700;color:var(--n-muted);border:2px solid rgba(156,151,142,.6);border-radius:4px;padding:2px 10px;margin-left:16px;vertical-align:10px}
+  .n-toc{position:absolute;left:96px;right:96px;top:70px;color:var(--n-ink);font-family:var(--f-body)}
+  .n-toc .h{font-weight:var(--head-w);font-size:68px;letter-spacing:-0.03em;margin-top:14px}
+  .n-toc .sub{font-size:28px;color:var(--n-muted);margin-top:6px}
+  .n-toc .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:22px;margin-top:44px}
+  .n-toc .cell{border:2px solid rgba(244,242,236,.28);border-radius:8px;padding:20px 20px 22px;min-height:190px;position:relative}
+  body:not([data-theme=night]) .n-toc .cell{border-color:rgba(27,26,24,.2)}
+  .n-toc .cell .no{font-weight:var(--head-w);font-size:40px;color:var(--n-muted)}
+  .n-toc .cell .tt{font-weight:700;font-size:28px;line-height:1.3;margin-top:10px;word-break:keep-all}
+  .n-toc .cell.pj{border-color:var(--n-key);background:rgba(255,212,0,.07)}
+  .n-toc .cell.pj .no{color:var(--n-key)}
+  .n-toc .cell .pjt{position:absolute;right:14px;top:16px;font-size:18px;font-weight:800;background:var(--n-key);color:var(--n-key-fg);padding:3px 9px;border-radius:4px}
+  .n-toc .cell.on{background:var(--n-key);color:var(--n-key-fg)} .n-toc .cell.on .no{color:var(--n-key-fg)}
+  .n-credit{position:absolute;right:28px;top:24px;font-family:var(--f-body);font-weight:600;font-size:18px;color:rgba(255,255,255,.88);
+    background:rgba(0,0,0,.45);padding:5px 12px 6px;border-radius:4px;white-space:nowrap}
+  .n-blabel{position:absolute;left:56px;top:48px}
+  /* 그려지는 일러스트 + 붓 라벨 — 2026-10-14 */
+  .n-illust{position:absolute}
+  .n-illust svg{width:100%;height:auto;overflow:visible;display:block}
+  .n-brush{position:absolute;display:inline-block;font-family:var(--f-head);font-weight:900;font-size:56px;letter-spacing:-0.02em;
+    color:#111;padding:10px 46px 14px;white-space:nowrap;transform:translateX(-50%) rotate(-2deg)}
+  .n-brush::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--bc,var(--n-key));
+    clip-path:polygon(1% 18%,6% 6%,22% 10%,40% 3%,61% 8%,80% 2%,97% 9%,100% 30%,98% 62%,100% 88%,84% 96%,63% 91%,41% 99%,20% 92%,4% 97%,0% 72%,2% 44%)}
+  .n-brush span{position:relative}
+  /* ---- 제안 9종 (title·keyword·tags·doc·contrast·odometer·cards·road·pip·reframe) — 2026-10-14 ---- */
+  .n-caret{display:inline-block;width:.08em;height:.86em;background:var(--n-key);margin-left:.1em;vertical-align:-.08em}
+  .n-exb{display:inline-block;font-size:20px;font-weight:700;color:var(--n-muted);border:2px solid rgba(156,151,142,.6);border-radius:4px;padding:1px 8px;margin-left:10px;vertical-align:6px}
+  .n-title{position:absolute;left:960px;top:230px;width:860px;color:var(--n-ink);font-family:var(--f-body)}
+  .n-title .h{font-weight:900;font-size:104px;line-height:1.08;letter-spacing:-0.04em;margin-top:26px}
+  .n-title .sub{font-size:34px;color:var(--n-muted);margin-top:28px;font-weight:600}
+  .n-title .badges{display:flex;gap:14px;margin-top:36px}
+  .n-title .badges span{border:2px solid var(--n-line);border-radius:4px;padding:8px 16px;font-size:24px;font-weight:700}
+  .n-title .badges span.k{border-color:var(--n-key);color:var(--n-key)}
+  .n-title .next{margin-top:60px;font-size:28px;color:var(--n-muted);font-weight:700;border-top:2px solid rgba(156,151,142,.35);padding-top:24px}
+  .n-title .next b{color:var(--n-ink);font-weight:800}
+  .n-kw{position:absolute;color:var(--n-ink);font-family:var(--f-body)}
+  .n-kw .w{font-weight:900;letter-spacing:-0.04em;text-shadow:0 6px 30px rgba(0,0,0,.6);white-space:nowrap;line-height:1.05}
+  .n-kw .band{display:inline-block;margin-top:10px;background:rgba(255,212,0,.94);color:#111;font-family:var(--f-hand);font-size:58px;padding:2px 18px 6px;white-space:nowrap}
+  .n-tag{position:absolute;background:var(--hdr-bg);border-radius:8px;padding:12px 20px;font-weight:800;font-size:34px;color:var(--n-ink);font-family:var(--f-body);white-space:nowrap;box-shadow:0 14px 34px rgba(0,0,0,.4)}
+  body[data-theme=night] .n-tag{background:var(--tex),rgba(18,18,18,.9)}
+  .n-tag b{color:var(--n-key);margin-right:8px}
+  .n-doc{position:absolute;left:50%;top:50%;width:880px;background:#fff;color:#1B1A18;border-radius:6px;padding:46px 56px;box-shadow:0 30px 70px rgba(0,0,0,.5);font-family:var(--f-body)}
+  .n-doc .h{font-weight:900;font-size:46px}
+  .n-doc .ex{font-size:24px;color:#9C978E;font-weight:700;border:2px solid #CFC8BE;border-radius:4px;padding:2px 10px;vertical-align:8px;margin-left:12px}
+  .n-doc .dt{font-size:24px;color:#6B645C;margin-top:8px}
+  .n-doc .rows{margin-top:22px}
+  .n-doc .r{display:flex;justify-content:space-between;padding:14px 0;border-bottom:2px solid #E6E2DA;font-size:28px}
+  .n-doc .blur{filter:blur(7px)}
+  .n-doc .tot{position:relative;display:flex;justify-content:space-between;margin-top:22px;font-size:36px;font-weight:900;padding:4px 8px}
+  .n-doc .tot i{position:absolute;left:0;top:50%;bottom:0;background:rgba(255,212,0,.78)}
+  .n-doc .tot span{position:relative}
+  .n-vs{position:absolute;top:200px;width:640px;text-align:center;color:var(--n-ink);font-family:var(--f-body)}
+  .n-vs .lab{display:inline-block;font-weight:900;font-size:52px;padding:8px 34px;transform:rotate(-2deg);background:rgba(244,242,236,.9);color:#111}
+  .n-vs.on .lab{background:var(--n-key)}
+  .n-vs .ics{display:flex;justify-content:center;gap:60px;margin-top:70px;color:var(--n-ink)}
+  .n-vs.on .ics{color:var(--n-key)}
+  .n-vs .vcap{font-size:32px;margin-top:40px;color:var(--n-muted);font-weight:600}
+  .n-vs.on .vcap{color:var(--n-ink)}
+  .n-arw{position:absolute;left:900px;top:430px;font-weight:900;font-size:120px;color:var(--n-key);font-family:var(--f-body)}
+  svg.n-ic{position:static;inset:auto;flex:none;fill:none;stroke:currentColor;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+  .n-odo .digits{display:flex;align-items:flex-end;margin-top:10px}
+  .n-odo .d{position:relative;width:74px;height:110px;overflow:hidden;background:#1E1E1E;border:2px solid rgba(244,242,236,.25);border-radius:6px;margin:0 3px}
+  .n-odo .col{position:absolute;left:0;right:0;top:0;text-align:center}
+  .n-odo .col span{display:block;height:106px;line-height:106px;font-weight:900;font-size:86px;color:var(--n-key)}
+  .n-odo .sep{font-weight:900;font-size:86px;color:var(--n-key);margin:0 2px;line-height:1}
+  .n-odo .foot{font-size:30px;margin-top:12px;font-weight:700}
+  .n-odo .foot b{color:var(--n-key)}
+  .n-cards{position:absolute;left:110px;right:110px;top:190px;display:flex;gap:40px;font-family:var(--f-body);color:var(--n-ink)}
+  .n-card{flex:1;border:2px solid rgba(244,242,236,.55);border-radius:10px;padding:40px 30px;text-align:center;color:rgba(244,242,236,.8)}
+  .n-card.on{border-color:var(--n-key);background:rgba(255,212,0,.07);color:var(--n-key)}
+  .n-card .tt{font-weight:900;font-size:44px;margin-top:26px;color:var(--n-ink)}
+  .n-card .ds{font-size:26px;color:var(--n-muted);margin-top:10px}
+  .n-rnode{position:absolute;width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+    font-weight:900;font-size:34px;background:var(--node-bg);border:3px solid var(--n-line);color:var(--n-ink);font-family:var(--f-body)}
+  .n-rnode.pj{background:var(--n-key);border-color:var(--n-key);color:var(--n-key-fg)}
+  .n-rlab{position:absolute;width:300px;text-align:center;font-size:26px;font-weight:700;color:var(--n-ink);font-family:var(--f-body)}
+  .n-flag{position:absolute;font-size:22px;font-weight:800;background:var(--n-key);color:var(--n-key-fg);padding:4px 10px;border-radius:4px;font-family:var(--f-body)}
+  .n-pipc{position:absolute;border-radius:50%;border:6px solid var(--n-key);box-sizing:border-box;box-shadow:0 20px 50px rgba(0,0,0,.6)}
+  .n-pipr{position:absolute;border-radius:14px;border:3px solid var(--n-line);box-sizing:border-box;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+  .n-rf{position:absolute;color:var(--n-ink);font-family:var(--f-body)}
+  .n-rf .h{font-weight:900;font-size:92px;line-height:1.15;letter-spacing:-0.03em;margin-top:18px}
+  .n-rf .sub{font-size:32px;color:var(--n-muted);margin-top:24px;font-weight:600}
+  /* 디자인 말자막(영상에 넣는 하단 자막) — 2026-10-14 */
+  .n-sub{position:absolute;left:50%;bottom:var(--sub-bottom,58px);transform:translateX(-50%);max-width:1500px;text-align:center;
+    font-family:var(--f-body);font-weight:600;font-size:var(--sub-size,42px);line-height:1.42;letter-spacing:-0.01em;color:#fff;
+    background:rgba(14,14,14,.80);border-radius:8px;padding:10px 30px 12px;box-shadow:0 10px 28px rgba(0,0,0,.35)}
+  body[data-theme=night] .n-sub{background:var(--tex),rgba(14,14,14,.82)}
+  .n-sub::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:5px;border-radius:0 4px 4px 0;background:var(--n-key)}
+  .n-sub span{display:block;white-space:nowrap}
+  #stage .n-sub mark{background:none;color:var(--n-key)}
+  /* 말자막 스타일 3종 (style) — 2026-10-14 사용자 선택: box(현재안·기본) · pill(알약형) · card(밝은 카드형).
+     #stage 를 붙여 night 테마 배경 규칙보다 우선하게 */
+  #stage .n-sub.pill{background:#111;border-radius:999px;padding:12px 42px 14px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  .n-sub.pill::before{display:none}
+  #stage .n-sub.card{background:rgba(255,255,255,.95);color:#151515;border-radius:6px;padding:10px 34px 12px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .n-sub.card::before{display:none}
+  #stage .n-sub.card mark{color:#151515;background:linear-gradient(transparent 55%,#FFD400 55%);padding:0 2px}
+  /* 간지(장 구분 카드) — 2026-10-14 */
+  .n-div{position:absolute;inset:0;background:var(--board-bg);font-family:var(--f-body);color:var(--n-ink)}
+  .n-div .num{position:absolute;left:150px;top:190px;font-weight:900;font-size:400px;line-height:1;letter-spacing:-0.05em;color:transparent;
+    -webkit-text-stroke:4px var(--n-key)}
+  .n-div .txt{position:absolute;left:180px;top:610px;width:1500px}
+  .n-div .part{display:inline-block;font-weight:800;font-size:26px;letter-spacing:.12em;padding:6px 14px 7px;border-radius:4px;background:var(--n-key);color:var(--n-key-fg)}
+  .n-div .h{font-weight:900;font-size:112px;letter-spacing:-0.04em;line-height:1.1;margin-top:22px}
+  .n-div .sub{font-size:36px;color:var(--n-muted);margin-top:18px;font-weight:600}
+  .n-div .prog{position:absolute;left:180px;right:180px;top:110px;display:flex;gap:10px}
+  .n-div .prog i{flex:1;height:5px;border-radius:3px;background:rgba(156,151,142,.35)}
+  .n-div .prog i.done{background:rgba(244,242,236,.75)} .n-div .prog i.on{background:var(--n-key)}
+
+  /* ======== 이러닝 효과 (elearn) — 2026-10-15. 수치는 세부비교 실측(1080p) ======== */
+  /* 말자막 flat: 본고딕 Medium · 64px · 직각 · 반투명 검정 · 그림자 없음 · 글자에 딱 맞는 상자(크로마키 프리미엄 실측) */
+  #stage .n-sub.flat{font-family:var(--f-sub,'Noto Sans KR'),sans-serif;font-weight:500;font-size:var(--sub-size,60px);line-height:1.22;letter-spacing:0;
+    background:rgba(0,0,0,var(--sub-a,.58));border-radius:0;padding:12px 18px 13px;box-shadow:none}
+  .n-sub.flat::before{display:none}
+  #stage .n-sub.flat mark{color:#FFD45C}
+  /* 과정 배지(우상단 상시) */
+  .e-badge{position:absolute;right:52px;top:40px;display:flex;align-items:center;gap:14px;font-family:var(--f-body);font-weight:700;font-size:24px;
+    color:var(--n-muted);background:rgba(255,255,255,.9);padding:9px 18px 10px;border-radius:6px;white-space:nowrap}
+  .e-badge b{color:var(--n-key);font-weight:800} .e-badge i{width:2px;height:22px;background:rgba(36,50,79,.18)}
+  /* 2단 위치표시: 회색 탭(위 모서리만 둥글게) + 흰 칩 + 번짐 없는 딱딱한 그림자(크로마키 실측: 탭 #727274 r20 · 그림자 8,7) */
+  .e-crumb{position:absolute;left:56px;top:40px;display:flex;flex-direction:column;align-items:flex-start}
+  .e-crumb .a{background:#6F7380;color:#F2F3F5;font-family:var(--f-sub,'Noto Sans KR'),sans-serif;font-weight:400;font-size:26px;line-height:1;
+    padding:10px 20px 12px;border-radius:16px 16px 0 0;white-space:nowrap}
+  .e-crumb .b{background:#fff;color:#262626;font-family:var(--f-head);font-weight:700;font-size:34px;line-height:1;padding:16px 44px 12px;
+    border-radius:0 14px 14px 14px;box-shadow:8px 7px 0 var(--hard,#ADADAE);white-space:nowrap}
+  /* 정의 카드: 알약 제목 · 검정 라벨 · 굵기 대비 문장(<b> 굵게, 나머지 가늘게) */
+  .e-def{position:absolute;color:var(--n-ink);font-family:var(--f-head)}
+  .e-def .tp{display:inline-block;background:var(--pill,var(--navy,#24324F));color:#fff;font-weight:700;font-size:48px;line-height:1;
+    padding:30px 64px 26px;border-radius:999px;white-space:nowrap}
+  .e-def .lb{display:inline-block;background:#101010;color:#fff;font-weight:700;font-size:42px;line-height:1;padding:24px 56px 20px;border-radius:999px;white-space:nowrap}
+  .e-def .ln{font-weight:500;font-size:62px;line-height:1.42;letter-spacing:-0.03em;white-space:nowrap}
+  .e-def .ln b{font-weight:700} .e-def .ln mark{color:var(--n-key);background:none;font-weight:700}
+  .e-def .gap{height:56px} .e-def .gap2{height:26px}
+  /* 이름표 marker: 소속(작게) 위 · 이름(크게, 형광펜 아래 40% · 좌우 20px 더 길게) — 크로마키 실측. plate 면 흰 판 */
+  .e-mk{position:absolute;color:var(--n-ink);font-family:var(--f-body)}
+  .e-mk.plate{background:rgba(255,255,255,.94);padding:24px 40px 26px;border-radius:6px;box-shadow:8px 8px 0 rgba(0,0,0,.28)}
+  .e-mk .org{font-weight:500;font-size:44px;letter-spacing:-0.03em;white-space:nowrap}
+  .e-mk .nm{display:inline-block;font-weight:800;font-size:72px;letter-spacing:-0.04em;margin-top:12px;padding:0 20px;margin-left:-20px;white-space:nowrap;
+    background:linear-gradient(transparent 60%,var(--hl) 60%) no-repeat 0 0/var(--hw,100%) 100%}
+  /* 이름표 pill: 남색 이름 알약 + 남색 테두리 흰 소속 알약을 오른쪽 아래로 어긋나게 겹침 — K-MOOC 실측 */
+  .e-np{position:absolute;font-family:var(--f-head)}
+  .e-np .nm{display:inline-block;background:#15134A;color:#fff;font-weight:700;font-size:54px;line-height:1;padding:24px 46px 30px;border-radius:999px;white-space:nowrap}
+  .e-np .org{display:inline-block;background:#fff;color:#0E1A2E;border:4px solid #15134A;font-family:var(--f-sub,'Noto Sans KR'),sans-serif;font-weight:500;font-size:34px;line-height:1;
+    padding:14px 32px 16px;border-radius:999px;margin:-22px 0 0 100px;box-shadow:0 8px 16px rgba(0,0,0,.25);white-space:nowrap;position:relative}
+  /* 스티커 문장(강사 옆 키네틱): G마켓 산스 Bold · 남색 · 흰 테두리 · 딱딱한 연보라 그림자 · 줄마다 부드러운 와이프 — K-MOOC 실측 */
+  .e-kt{position:absolute;font-family:var(--f-head);font-weight:700;letter-spacing:-0.04em;color:#1C1A4A}
+  .e-kt .l{font-size:var(--kt-size,78px);line-height:1;white-space:nowrap;-webkit-text-stroke:12px #fff;paint-order:stroke fill;
+    filter:drop-shadow(7px 7px 0 #B7AFC6)}
+  .e-kt .l + .l{margin-top:44px}
+  .e-kt mark{background:none;color:var(--n-key)}
+  /* 특징 칩 + 굵은 문장: 둥근 사각 칩(흰 테두리 4·딱딱한 그림자) + 흰 테두리 문장 — K-MOOC 실측 */
+  .e-feat{position:absolute;left:110px;bottom:210px;font-family:var(--f-head)}
+  .e-feat .c{display:inline-block;background:var(--feat,var(--n-key));color:#fff;font-weight:700;font-size:48px;line-height:1;padding:20px 30px 16px;border-radius:16px;
+    border:4px solid #fff;box-shadow:8px 8px 0 rgba(20,20,40,.55);text-shadow:3px 3px 0 rgba(60,10,10,.45);white-space:nowrap;transform-origin:0 100%}
+  .e-feat .s{font-weight:700;font-size:68px;line-height:1.1;letter-spacing:-0.03em;color:#15133A;margin-top:24px;-webkit-text-stroke:12px #fff;paint-order:stroke fill;
+    filter:drop-shadow(6px 6px 0 rgba(20,20,40,.35));white-space:nowrap}
+  .e-feat .s b{color:var(--n-key)}
+  /* 학습목표 카드 */
+  .e-goal{position:absolute;left:120px;top:180px;width:1180px;background:#fff;border-radius:28px;box-shadow:0 20px 50px rgba(20,30,60,.13);padding:66px 80px 72px}
+  .e-goal::before{content:"";position:absolute;left:0;top:70px;width:12px;height:70px;background:var(--n-key);border-radius:0 6px 6px 0}
+  .e-goal .h{font-family:var(--f-head);font-weight:700;font-size:58px;color:var(--navy,#24324F);letter-spacing:-0.03em}
+  .e-goal .h small{font-family:var(--f-body);font-weight:800;font-size:24px;color:var(--n-key);letter-spacing:.18em;margin-left:18px;vertical-align:8px}
+  .e-goal .rows{margin-top:50px;display:flex;flex-direction:column;gap:36px}
+  .e-goal .r{display:flex;gap:28px;align-items:flex-start;font-family:var(--f-body);font-weight:600;font-size:40px;line-height:1.45;color:var(--n-ink);word-break:keep-all}
+  .e-goal .r b{color:var(--n-key);font-weight:800}
+  .e-goal .r i{flex:none;width:60px;height:60px;border-radius:50%;background:var(--navy,#24324F);color:#fff;font:700 32px/62px var(--f-head);text-align:center;font-style:normal;margin-top:1px}
+  .e-name{position:absolute;text-align:center;font-family:var(--f-body);font-weight:800;font-size:32px;color:var(--navy,#24324F);white-space:nowrap}
+  .e-name span{font-weight:600;color:var(--n-muted);font-size:26px;margin-left:10px}
+  /* 영상 속 퀴즈 / 생각해 보기 */
+  .e-quiz{position:absolute;left:120px;top:205px;width:1240px;font-family:var(--f-body);color:var(--n-ink)}
+  .e-quiz .q{display:inline-block;font-family:var(--f-head);font-weight:700;font-size:30px;color:#fff;background:var(--n-key);padding:12px 24px 9px;border-radius:999px;letter-spacing:.06em}
+  .e-quiz .h{font-family:var(--f-head);font-weight:700;font-size:68px;line-height:1.3;color:var(--navy,#24324F);letter-spacing:-0.03em;margin-top:30px;word-break:keep-all}
+  .e-quiz .h mark{background:none;color:var(--n-key)}
+  .e-quiz .ch{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:56px}
+  .e-quiz .ch div{background:#fff;border:3px solid #E2E5EB;border-radius:20px;padding:30px 34px;font-weight:700;font-size:38px;display:flex;gap:22px;align-items:center;white-space:nowrap}
+  .e-quiz .ch div i{font-style:normal;width:54px;height:54px;border-radius:50%;background:#F1F2F5;color:var(--n-muted);font:700 30px/56px var(--f-head);text-align:center;flex:none}
+  .e-quiz .ch div.ok{border-color:var(--n-key);background:#FDECEA;color:var(--n-key)} .e-quiz .ch div.ok i{background:var(--n-key);color:#fff}
+  .e-quiz .ex{font-size:34px;line-height:1.5;color:var(--n-muted);margin-top:44px;font-weight:600;word-break:keep-all} .e-quiz .ex b{color:var(--n-ink)}
+  .e-ring{position:absolute;left:1440px;top:250px;width:300px;height:300px}
+  .e-ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 120px var(--f-head);color:var(--navy,#24324F)}
+  .e-ring small{position:absolute;left:0;right:0;top:330px;text-align:center;font:700 28px var(--f-body);color:var(--n-muted)}
+  .e-quiz.think{left:160px;right:160px;width:auto;top:300px;text-align:center}
+  .e-quiz.think .h{font-size:86px}
+  /* 정리하기 */
+  .e-sum .side{position:absolute;left:0;top:0;bottom:0;width:520px;background:var(--navy,#24324F);color:#fff;padding:230px 70px}
+  .e-sum .side .h{font-family:var(--f-head);font-weight:700;font-size:112px;line-height:1.08;letter-spacing:-0.04em}
+  .e-sum .side small{display:block;margin-top:24px;font:800 30px var(--f-body);letter-spacing:.3em;color:#9FB0D0}
+  .e-sum .done{position:absolute;left:620px;top:120px;font-family:var(--f-head);font-weight:700;font-size:34px;color:var(--n-key)}
+  .e-sum .rows{position:absolute;left:620px;top:200px;width:1200px;display:flex;flex-direction:column;gap:30px}
+  .e-sum .r{background:#fff;border-radius:22px;padding:32px 40px;display:flex;gap:30px;align-items:center;box-shadow:0 12px 30px rgba(20,30,60,.08);
+    font-family:var(--f-body);font-weight:700;font-size:40px;line-height:1.4;color:var(--n-ink);word-break:keep-all}
+  .e-sum .r b{color:var(--n-key);font-weight:900} .e-sum .r svg{position:static;flex:none}
+  .e-sum .next{position:absolute;left:620px;bottom:200px;display:flex;align-items:center;gap:20px;font-family:var(--f-body)}
+  .e-sum .next span{background:var(--n-ink);color:#fff;border-radius:999px;padding:10px 24px;font-weight:800;font-size:26px}
+  .e-sum .next b{color:var(--navy,#24324F);font-family:var(--f-head);font-weight:700;font-size:40px}
+  /* 이러닝 간지: 코랄 세로 띠 · 괄호 틀 · 진행 단계 칩 */
+  .e-div{position:absolute;inset:0;background:var(--board-bg);font-family:var(--f-body);color:var(--n-ink)}
+  .e-div .bar{position:absolute;left:0;top:0;bottom:0;width:28px;background:var(--n-key)}
+  .e-div .dots{position:absolute;right:90px;bottom:90px;width:300px;height:180px;background-image:radial-gradient(#C9CED8 2.5px,transparent 3px);background-size:30px 30px}
+  .e-div .k{position:absolute;border:7px solid var(--n-key)}
+  .e-div .k1{left:240px;top:290px;width:130px;height:130px;border-right:none;border-bottom:none}
+  .e-div .k2{right:280px;bottom:290px;width:130px;height:130px;border-left:none;border-top:none}
+  .e-div .no{position:absolute;left:300px;top:340px;font-family:var(--f-head);font-weight:700;font-size:34px;color:var(--n-key);letter-spacing:.18em}
+  .e-div .h{position:absolute;left:294px;top:398px;font-family:var(--f-head);font-weight:700;font-size:150px;line-height:1.1;letter-spacing:-0.045em;color:var(--navy,#24324F);white-space:nowrap}
+  .e-div .h mark{background:none;color:var(--n-key)}
+  .e-div .sub{position:absolute;left:302px;top:600px;font-weight:600;font-size:44px;color:var(--n-muted)}
+  .e-div .steps{position:absolute;left:302px;top:700px;display:flex;gap:14px}
+  .e-div .steps s{text-decoration:none;font-weight:700;font-size:26px;color:var(--n-muted);background:#fff;border:2px solid #E2E5EB;border-radius:999px;padding:9px 22px}
+  .e-div .steps s.on{background:var(--n-key);color:#fff;border-color:var(--n-key)}
+  .e-div .steps s.done{color:var(--navy,#24324F);border-color:rgba(36,50,79,.35)}
+</style></head>
+<body><div id="stage"></div>
+<script>
+// ---------- 시간 함수 ----------
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const easeOut=x=>1-Math.pow(1-clamp(x),3);
+const easeBack=x=>{x=clamp(x);const c=1.6;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+// 등장 진행도 p(0→1)와 퇴장 투명도 o
+function life(e,t,inDur=.45,outDur=.3){
+  // snap_in/snap_out: 휩 전환 가운데에서 시작·끝나는 효과는 페이드 없이 바로(전환이 장면을 가려 준다) — 2026-10-14
+  const p=e.snap_in?(t>=e.t0?1:0):(t-e.t0)/inDur, o=e.snap_out?1:clamp((e.t1-t)/outDur);
+  return {p:clamp(p), o:(t<e.t0||t>e.t1)?0:o, active:t>=e.t0&&t<=e.t1};
+}
+// 월드(원본 화면) 좌표 → 화면 좌표. cam = {s, cx, cy}
+const W=(cam,x,y)=>[(x-cam.cx)*cam.s+960,(y-cam.cy)*cam.s+540];
+function rectS(cam,b,pad){ const [x0,y0]=W(cam,b[0],b[1]); const [x1,y1]=W(cam,b[0]+b[2],b[1]+b[3]);
+  return [x0-pad,y0-pad,(x1-x0)+2*pad,(y1-y0)+2*pad]; }
+
+// ---------- 효과 그리기 ----------
+const NS="http://www.w3.org/2000/svg";
+// SVG 선·채움 색. 기본값은 예전 코랄과 같다. setTheme() 이 CSS 변수(--mk 등)에서 다시 읽는다 — 2026-10-11
+let C={mk:"#E65347",mkSoft:"rgba(230,83,71,.25)",mkRing:"rgba(230,83,71,.3)",hl:"rgba(255,214,10,.42)"};
+const io=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2};   // fx.py 의 ease() 와 같은 식
+const div=(cls,html)=>{const d=document.createElement("div");d.className=cls;if(html!=null)d.innerHTML=html;return d};
+function svg(){const s=document.createElementNS(NS,"svg");s.setAttribute("width",1920);s.setAttribute("height",1080);return s}
+function el(tag,attrs){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e}
+
+const draw={
+  // 네모 표시: 선이 한 바퀴 그려지며 나타난다
+  box(e,t,cam,root){ const L=life(e,t,.55); if(!L.active) return;
+    const [x,y,w,h]=rectS(cam,e.box,e.pad??10); const r=e.r??12, per=2*(w+h);
+    const s=svg(); s.style.opacity=L.o;
+    s.appendChild(el("rect",{x,y,width:w,height:h,rx:r,fill:"none",stroke:C.mkSoft,"stroke-width":14,
+      "stroke-dasharray":per,"stroke-dashoffset":per*(1-easeOut(L.p))}));
+    s.appendChild(el("rect",{x,y,width:w,height:h,rx:r,fill:"none",stroke:C.mk,"stroke-width":5,
+      "stroke-linecap":"round","stroke-dasharray":per,"stroke-dashoffset":per*(1-easeOut(L.p))}));
+    root.appendChild(s);
+    if(e.label) tag(e,L,x,y,root,h);
+  },
+  // 밑줄: 왼쪽에서 오른쪽으로 긋는다. 살짝 손글씨 느낌의 곡선
+  underline(e,t,cam,root){ const L=life(e,t,.45); if(!L.active) return;
+    const [x,y,w,h]=rectS(cam,e.box,0); const yy=y+h+(e.gap??8);
+    const d=`M ${x-6} ${yy+2} Q ${x+w*0.5} ${yy-4} ${x+w+6} ${yy+1}`;
+    const len=w+20; const s=svg(); s.style.opacity=L.o;
+    s.appendChild(el("path",{d,fill:"none",stroke:C.mk,"stroke-width":e.width??7,"stroke-linecap":"round",
+      "stroke-dasharray":len,"stroke-dashoffset":len*(1-easeOut(L.p))}));
+    root.appendChild(s);
+  },
+  // 동그라미: 손으로 두른 듯한 타원
+  circle(e,t,cam,root){ const L=life(e,t,.55); if(!L.active) return;
+    const [x,y,w,h]=rectS(cam,e.box,e.pad??14); const cx=x+w/2, cy=y+h/2, rx=w/2, ry=h/2;
+    const d=`M ${cx+rx} ${cy} A ${rx} ${ry} 0 1 1 ${cx+rx*0.96} ${cy-ry*0.28}`;
+    const len=Math.PI*(rx+ry)*1.05; const s=svg(); s.style.opacity=L.o;
+    s.appendChild(el("path",{d,fill:"none",stroke:C.mk,"stroke-width":6,"stroke-linecap":"round",
+      "stroke-dasharray":len,"stroke-dashoffset":len*(1-easeOut(L.p))}));
+    root.appendChild(s); if(e.label) tag(e,L,x,y,root,h);
+  },
+  // 체크: 원이 튀어나오고 체크 표시가 그려진다
+  check(e,t,cam,root){ const L=life(e,t,.6); if(!L.active) return;
+    const [cx,cy]=W(cam,e.at[0],e.at[1]); const R=(e.size??34);
+    const sc=easeBack(clamp(L.p/0.55)); const k=easeOut(clamp((L.p-0.35)/0.65));
+    const s=svg(); s.style.opacity=L.o; const g=el("g",{transform:`translate(${cx} ${cy}) scale(${sc})`});
+    g.appendChild(el("circle",{cx:0,cy:0,r:R,fill:C.mk}));
+    g.appendChild(el("circle",{cx:0,cy:0,r:R+7,fill:"none",stroke:C.mkRing,"stroke-width":6}));
+    const len=R*1.9; g.appendChild(el("path",{d:`M ${-R*.42} ${R*.02} L ${-R*.1} ${R*.34} L ${R*.46} ${-R*.3}`,
+      fill:"none",stroke:"#fff","stroke-width":R*.2,"stroke-linecap":"round","stroke-linejoin":"round",
+      "stroke-dasharray":len,"stroke-dashoffset":len*(1-k)}));
+    s.appendChild(g); root.appendChild(s);
+    if(e.label){ const d=document.createElement("div"); d.className="tag"; d.textContent=e.label;
+      d.style.left=(cx+R+18)+"px"; d.style.top=(cy-24)+"px"; d.style.opacity=L.o*easeOut(clamp((L.p-.4)/.6));
+      d.classList.add("side"); root.appendChild(d); }
+  },
+  // 스포트라이트: 나머지를 어둡게
+  spot(e,t,cam,root){ const L=life(e,t,.4,.4); if(!L.active) return;
+    const [x,y,w,h]=rectS(cam,e.box,e.pad??12); const s=svg(); s.style.opacity=L.o*easeOut(L.p);
+    const m=el("mask",{id:"m"}); m.appendChild(el("rect",{x:0,y:0,width:1920,height:1080,fill:"#fff"}));
+    m.appendChild(el("rect",{x,y,width:w,height:h,rx:14,fill:"#000"})); s.appendChild(m);
+    s.appendChild(el("rect",{x:0,y:0,width:1920,height:1080,fill:`rgba(10,10,12,${e.dim??.55})`,mask:"url(#m)"}));
+    root.appendChild(s);
+  },
+  // 강조자막
+  caption(e,t,cam,root){ const L=life(e,t,.35,.25); if(!L.active) return;
+    const d=document.createElement("div");
+    const sc=.92+.08*easeBack(L.p); d.style.opacity=L.o*easeOut(L.p);
+    if(!e.kind){            // 예전 형식 — 한 줄, 하단 86px (다른 과정 spec 호환)
+      d.className="cap"+(e.pos==="top"?" top":""); d.innerHTML=e.html;
+      d.style.transform=`translateX(-50%) scale(${sc})`; root.appendChild(d); return;
+    }
+    const pos=e.pos||"raised", side=pos==="left"||pos==="right";
+    d.className=`cap v2 k-${e.kind} ${pos}`+(side?" side":"");
+    d.innerHTML=capHTML(e);
+    if(side){ d.style[pos]=(e.margin??56)+"px"; d.style.top=(e.y??540)+"px";
+      d.style.transformOrigin=(pos==="left"?"0":"100%")+" 50%"; d.style.transform=`translateY(-50%) scale(${sc})`; }
+    else { d.style.transform=`translateX(-50%) scale(${sc})`; }
+    if(e.maxw) d.style.maxWidth=e.maxw+"px";
+    root.appendChild(d);
+  },
+  // 참고자료 카드
+  ref(e,t,cam,root){ const L=life(e,t,.5,.35); if(!L.active) return;
+    const d=document.createElement("div"); d.className="ref"+(e.img?" pic":"");
+    d.innerHTML=`<div class="chip">${e.chip??"참고"}</div><div class="ttl">${e.title}</div>`+
+      (e.body?`<div class="body">${e.body}</div>`:"")+(e.img?`<img src="${e.img}">`:"")+(e.url?`<div class="url">${e.url}</div>`:"");
+    d.style.opacity=L.o*easeOut(L.p); d.style.transform=`translateX(${(1-easeOut(L.p))*80}px)`; root.appendChild(d);
+  },
+  // ======== 구조 효과 — 2026-10-11 ========
+  // 분할 보드: 화면 녹화의 box 영역이 카드(card)로 줄어들고 나머지는 보드 배경. 줄어드는 카메라는 fx.py 가 맡고
+  // 여기서는 보드 배경(카드 자리만 비움)·테두리·라벨·단계 목록을 그린다. 단계 items:[{t,title,desc}] 는 말하는 순간 뜬다
+  board(e,t,cam,root){ if(t<e.t0||t>e.t1) return;
+    const d=e.ease??.8, p=boardP(e,t), G=boardGeom(e), [x,y,w,h]=G.c;
+    const L=x*p, T=y*p, R=1920+(x+w-1920)*p, B=1080+(y+h-1080)*p;
+    const bg=div("n-board"); bg.style.clipPath=`path(evenodd,"M0 0H1920V1080H0Z M${L} ${T}H${R}V${B}H${L}Z")`; root.appendChild(bg);
+    const fr=div("n-frame"); Object.assign(fr.style,{left:L+"px",top:T+"px",width:(R-L)+"px",height:(B-T)+"px",opacity:p}); root.appendChild(fr);
+    const ui = t<e.t1-d ? easeOut((t-(e.t0+d+.1))/.5) : 1-easeOut((t-(e.t1-d))/.4);
+    if(ui<=0) return;
+    const wipe=el2=>{el2.style.opacity=ui; el2.style.clipPath=`inset(0 ${(1-ui)*100}% 0 0)`};
+    if(e.label){ const lb=div("n-label",e.label); lb.style.left=(x+4)+"px"; lb.style.top=(y-50)+"px"; wipe(lb); root.appendChild(lb); }
+    const px=e.panel_x??(x+w+74), pn=div("n-panel"); pn.style.left=px+"px"; pn.style.top=y+"px"; pn.style.width=(1920-px-90)+"px";
+    if(e.chip){ const c=div("n-chip",e.chip); wipe(c); pn.appendChild(c); }
+    const its=e.items||[], box=div("n-steps");
+    its.forEach((it,i)=>{ if(t<it.t) return; const q=easeOut((t-it.t)/.45);
+      const nx=its[i+1], st=div("n-st "+(nx&&t>=nx.t?"done":"on"),
+        `<div class="no">${String(i+1).padStart(2,"0")}</div><div class="tt">${it.title}</div>`+(it.desc?`<div class="ds">${it.desc}</div>`:""));
+      st.style.opacity=q*ui; st.style.filter=`blur(${(1-q)*8}px)`; box.appendChild(st); });
+    pn.appendChild(box); root.appendChild(pn);
+  },
+  // 소주제 머리말: 좌상단 [번호] 제목 ─ ─ ─ 진행 표시
+  hdr(e,t,cam,root){ const L=life(e,t,.5,.35); if(!L.active) return;
+    const tot=e.total??0, dots=tot?`<div class="dots">${Array.from({length:tot},(_,i)=>`<i class="${i+1===e.n?"on":i+1<e.n?"done":""}"></i>`).join("")}</div>`:"";
+    const d=div("n-hdr",`<div class="n">${e.n??""}</div><div class="t">${e.title}</div>${dots}`);
+    const k=easeOut(L.p); d.style.opacity=L.o; d.style.clipPath=`inset(0 ${(1-k)*100}% 0 0)`; root.appendChild(d);
+  },
+  // 형광펜(월드): 글자 줄 위에 반투명 띠가 왼→오로 칠해진다
+  hl(e,t,cam,root){ const L=life(e,t,.5,.3); if(!L.active) return;
+    const [x,y,w,h]=rectS(cam,e.box,e.pad??6); const s=svg(); s.style.opacity=L.o;
+    s.appendChild(el("rect",{x,y,width:w*easeOut(L.p),height:h,rx:6,fill:e.color??C.hl})); root.appendChild(s);
+  },
+  // 손글씨 주석: text 를 at 에(screen:true 면 화면 좌표, 아니면 월드), to(월드)가 있으면 화살표를 그린다
+  hand(e,t,cam,root){ const L=life(e,t,.35,.3); if(!L.active) return;
+    const [sx,sy]=e.screen?e.at:W(cam,e.at[0],e.at[1]); const d=div("n-hand",e.text);
+    Object.assign(d.style,{left:sx+"px",top:sy+"px",opacity:L.o*easeOut(L.p),transform:`rotate(${e.rot??-4}deg)`}); if(e.size) d.style.fontSize=e.size+"px"; root.appendChild(d);
+    if(e.to){ const [tx,ty]=W(cam,e.to[0],e.to[1]); const fx=sx+(e.from?.[0]??d.offsetWidth+10), fy=sy+(e.from?.[1]??d.offsetHeight*.6);
+      const cx=Math.max(fx,tx)+(e.bend??60), cy=(fy+ty)/2; const ang=Math.atan2(ty-cy,tx-cx), hd=24;
+      const a1=[tx-hd*Math.cos(ang-.5),ty-hd*Math.sin(ang-.5)], a2=[tx-hd*Math.cos(ang+.5),ty-hd*Math.sin(ang+.5)];
+      const s=svg(); s.style.opacity=L.o; const pth=el("path",{d:`M${fx} ${fy} Q${cx} ${cy} ${tx} ${ty} M${a1[0]} ${a1[1]} L${tx} ${ty} L${a2[0]} ${a2[1]}`,
+        fill:"none",stroke:C.mk,"stroke-width":7,"stroke-linecap":"round","stroke-linejoin":"round"});
+      s.appendChild(pth); root.appendChild(s); const len=pth.getTotalLength();
+      pth.setAttribute("stroke-dasharray",len); pth.setAttribute("stroke-dashoffset",len*(1-easeOut((t-e.t0-.15)/.5))); }
+  },
+  // 장 지도(전체 화면): 차시의 소주제를 점선 길 위의 번호로. on 번째가 지금
+  map(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p);
+    const its=e.items||[], n=its.length, x0=e.x0??230, x1=e.x1??1690;
+    const pos=its.map((_,i)=>[n>1?x0+(x1-x0)*i/(n-1):960, i%2?650:480]);
+    let path=""; pos.forEach(([x,y],i)=>{ if(!i){path=`M${x} ${y}`;return} const [px,py]=pos[i-1], dx=(x-px)/2; path+=` C${px+dx} ${py} ${x-dx} ${y} ${x} ${y}`; });
+    const hd=div("n-map-head",(e.chip?`<span class="n-chip">${e.chip}</span>`:"")+`<div class="n-map-title">${e.title??""}</div>`+(e.sub?`<div class="n-map-sub">${e.sub}</div>`:""));
+    hd.style.clipPath=`inset(0 ${(1-easeOut((t-e.t0-.1)/.6))*100}% 0 0)`; f.appendChild(hd);
+    const s=svg(); s.appendChild(el("path",{d:path,fill:"none",stroke:getComputedStyle(document.body).getPropertyValue("--n-line"),
+      "stroke-width":4,"stroke-dasharray":"4 16","stroke-linecap":"round"})); f.appendChild(s);
+    pos.forEach(([x,y],i)=>{ const it=its[i], on=i+1===e.on, q=easeBack(clamp((t-e.t0-.2-i*.06)/.45));
+      const nd=div("n-node"+(on?" on":""),String(i+1)); Object.assign(nd.style,{left:(x-44)+"px",top:(y-44)+"px",transform:`scale(${q})`}); f.appendChild(nd);
+      const lb=div("n-nl"+(on?" on":""),`<div class="tt">${it[0]??it}</div>`+(it[1]?`<div class="tm">${it[1]}</div>`:""));
+      lb.style.left=(x-280)+"px"; if(y<600) lb.style.bottom=(1080-y+70)+"px"; else lb.style.top=(y+70)+"px";
+      lb.style.opacity=clamp(q); f.appendChild(lb); });
+    root.appendChild(f);
+  },
+  // 핵심 문장(전체 화면): 뒤를 흐리고(fx.py) 어둡게 깐 위에 큰 문장. <mark> 는 노란 붓터치 밑줄
+  kinetic(e,t,cam,root){ const L=life(e,t,.5,.35); if(!L.active) return;
+    const v=div("n-veil"); v.style.opacity=L.o*easeOut(L.p); root.appendChild(v);
+    const k=div("n-kin",(e.chip?`<span class="n-chip">${e.chip}</span>`:"")+(e.pre?`<div class="pre">${e.pre}</div>`:"")+`<div class="main">${e.html}</div>`);
+    const q=easeOut((t-e.t0-.1)/.5); k.style.opacity=L.o*q; k.style.filter=`blur(${(1-q)*10}px)`;
+    k.style.transform=`translate(-50%,calc(-50% + ${(1-q)*30}px))`; k.style.setProperty("--sw",easeOut((t-e.t0-.45)/.45)); root.appendChild(k);
+  },
+  // 마무리 요약(전체 화면): 제목 + 요점 줄이 차례로
+  recap(e,t,cam,root){ const L=life(e,t,.5,.35); if(!L.active) return;
+    const v=div("n-veil"); v.style.opacity=L.o*easeOut(L.p); root.appendChild(v);
+    const rows=(e.rows||[]).map((r,i)=>{ const q=easeOut((t-e.t0-.45-i*(e.gap??.35))/.4);
+      return `<div class="row" style="opacity:${q};transform:translateX(${(1-q)*-24}px)"><b>${i+1}</b><span>${r}</span></div>`}).join("");
+    const r=div("n-recap",(e.chip?`<span class="n-chip">${e.chip}</span>`:"")+`<div class="h">${e.title??""}</div><div class="rows">${rows}</div>`);
+    const q=easeOut((t-e.t0-.1)/.45); r.style.opacity=L.o*q; r.style.transform=`translate(-50%,calc(-50% + ${(1-q)*24}px))`; root.appendChild(r);
+  },
+  // ======== 인터뷰형 효과 — 2026-10-14 ========
+  // 이름 자막: 왼쪽 아래(자막 위). name, role
+  lower3(e,t,cam,root){ const L=life(e,t,.5,.35); if(!L.active) return;
+    const d=div("n-lower3",`<div class="bar"></div><div class="box"><div class="nm">${e.name}</div>${e.role?`<div class="rl">${e.role}</div>`:""}</div>`);
+    const k=easeOut(L.p); d.style.opacity=L.o; d.style.clipPath=`inset(0 ${(1-k)*100}% 0 0)`; if(e.x!=null) d.style.left=e.x+"px"; root.appendChild(d);
+  },
+  // 강사 옆 패널: side(left|right), y(가운데), w. kick·html·sub 또는 items:[{t,text}] (말할 때 한 줄씩)
+  side(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const sd=e.side||"right", w=e.w??540, its=e.items||[];
+    const rows=its.length?`<div class="rows">${its.map((it,i)=>{ if(t<it.t) return ""; const q=easeOut((t-it.t)/.4);
+      return `<div class="row" style="opacity:${q};transform:translateX(${(1-q)*(sd==="left"?-20:20)}px)"><b>${i+1}</b><span>${it.text}</span></div>`}).join("")}</div>`:"";
+    const d=div("n-panel2 "+sd,(e.kick?`<div class="kick">${e.kick}</div>`:"")+(e.html?`<div class="main">${e.html}</div>`:"")+rows+(e.sub?`<div class="sub">${e.sub}</div>`:""));
+    d.style.width=w+"px"; d.style[sd]=(e.margin??150)+"px"; d.style.top=(e.y??480)+"px";
+    const k=easeOut(L.p); d.style.opacity=L.o*k; d.style.transform=`translate(${(1-k)*(sd==="left"?-40:40)}px,-50%)`; root.appendChild(d);
+  },
+  // 숫자 콜아웃: label + 0→value 로 올라가는 숫자 + 단위 + 화살표(up|down)
+  count(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const sd=e.side||"right", q=easeOut((t-e.t0-.15)/(e.dur??.9)), v=(e.from??0)+((e.value??0)-(e.from??0))*q;
+    const num=(e.fmt==="int"||Number.isInteger(e.value))?Math.round(v).toLocaleString("ko-KR"):v.toFixed(1);
+    const ar=e.arrow?`<span class="ar ${e.arrow}">${e.arrow==="up"?"▲":"▼"}</span>`:"";
+    const d=div("n-panel2 n-count "+sd,`<div class="lab">${e.label??""}</div><div class="num">${e.prefix??""}${num}<small>${e.suffix??""}</small>${ar}</div>`+(e.sub?`<div class="sub">${e.sub}</div>`:""));
+    d.style[sd]=(e.margin??150)+"px"; d.style.top=(e.y??480)+"px";
+    const k=easeOut(L.p); d.style.opacity=L.o*k; d.style.transform=`translate(${(1-k)*(sd==="left"?-40:40)}px,-50%)`; root.appendChild(d);
+  },
+  // 막대 그래프(전체 화면, 뒤 흐림): values·labels, hi/lo 인덱스, example:true 면 '예시' 표시
+  chart(e,t,cam,root){ const L=life(e,t,.5,.35); if(!L.active) return;
+    const v=div("n-veil"); v.style.opacity=L.o*easeOut(L.p); root.appendChild(v);
+    const vals=e.values||[], mx=Math.max(...vals,1), hi=new Set(e.hi||[]), lo=new Set(e.lo||[]);
+    const cols=vals.map((x,i)=>{ const q=easeOut((t-e.t0-.4-i*(e.gap??.12))/.5);
+      return `<div class="col"><div class="bar${hi.has(i)?" hi":lo.has(i)?" lo":""}" style="height:${x/mx*100*q}%"></div><div class="lb">${(e.labels||[])[i]??""}</div></div>`}).join("");
+    const c=div("n-chart",(e.chip?`<span class="n-chip">${e.chip}</span>`:"")+`<div class="h">${e.title??""}${e.example?'<span class="ex">예시</span>':""}</div>`+
+      `<div class="plot">${cols}</div>`+(e.note?`<div class="note">${e.note}</div>`:""));
+    const q=easeOut((t-e.t0-.1)/.45); c.style.opacity=L.o*q; c.style.transform=`translate(-50%,calc(-50% + ${(1-q)*24}px))`; root.appendChild(c);
+  },
+  // B-roll: 영상·이미지 자체는 fx.py 가 바꿔 넣고, 여기서는 출처(credit)와 장면 라벨(label)만
+  broll(e,t,cam,root){ const L=life(e,t,.35,.3); if(!L.active) return;
+    if(e.credit){ const c=div("n-credit",e.credit); c.style.opacity=L.o*easeOut(L.p); root.appendChild(c); }
+    if(e.label){ const b=div("n-blabel",`<span class="n-chip">${e.label}</span>`); const k=easeOut((t-e.t0-.2)/.4);
+      b.style.opacity=L.o*k; b.style.clipPath=`inset(0 ${(1-k)*100}% 0 0)`; root.appendChild(b); }
+  },
+  // 그려지는 일러스트: svg(문자열, fx.py 가 svg_file 에서 읽어 넣음)를 x,y,w 에.
+  //   ① 도형마다 차례로 외곽선이 그려지고(draw 초 동안) ② 색이 차오른다(fill_at 부터). stroke 만 있는 선은 제 색으로 그려진다.
+  //   full:true 면 뒤에 보드(전체 화면), label 이 있으면 붓 라벨이 위에. ink: 외곽선 색, outline: 다 그린 뒤 남길 외곽선 굵기(0 이면 사라짐)
+  illust(e,t,cam,root){ const L=life(e,t,.3,.35); if(!L.active||!e.svg) return;
+    if(e.full){ const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p); root.appendChild(f); }
+    const w=e.w??900, box=div("n-illust",e.svg); Object.assign(box.style,{left:(e.x??(960-w/2))+"px",top:(e.y??170)+"px",width:w+"px",opacity:L.o});
+    root.appendChild(box);
+    const els=[...box.querySelectorAll("path,circle,rect,ellipse,line,polyline,polygon")], n=els.length;
+    const D=e.draw??2.0, t0=e.t0+(e.delay??.2), per=D*.45, step=n>1?(D-per)/(n-1):0;
+    const ink=e.ink??getComputedStyle(document.body).getPropertyValue("--n-ink").trim(), keep=e.outline??2.5;
+    const fillAt=t0+(e.fill_at??D*.8), fillDur=e.fill_dur??.7;
+    els.forEach((el,i)=>{ const p=clamp((t-(t0+i*step))/per), ep=easeOut(p);
+      const fill=el.getAttribute("fill"), stroke=el.getAttribute("stroke"), hasFill=fill&&fill!=="none";
+      const lineOnly=!hasFill&&stroke&&stroke!=="none";
+      if(el.dataset.nofillOutline){ el.style.opacity=easeOut((t-fillAt)/fillDur); return; }   // 그림자 같은 것은 마지막에 은은히
+      let len=0; try{ len=el.getTotalLength(); }catch(_){ len=1000; }
+      if(lineOnly){ el.setAttribute("stroke-dasharray",len); el.setAttribute("stroke-dashoffset",len*(1-ep)); return; }
+      const q=easeOut(clamp((t-(fillAt+i*(e.fill_step??.03)))/fillDur));
+      el.setAttribute("fill-opacity",q*(+(el.getAttribute("fill-opacity")??1)));
+      el.setAttribute("stroke",ink); el.setAttribute("stroke-width",(1-q)*5+q*keep); el.setAttribute("stroke-linejoin","round");
+      el.setAttribute("stroke-opacity",p>0?(keep>0?1:1-q):0);
+      el.setAttribute("stroke-dasharray",len); el.setAttribute("stroke-dashoffset",len*(1-ep));
+    });
+    if(e.label){ const k=easeOut((t-(e.label_at??(e.t0+D+.2)))/.45); if(k>0){
+      const b=div("n-brush",`<span>${e.label}</span>`); b.style.left=(e.label_x??960)+"px"; b.style.top=(e.label_y??70)+"px";
+      if(e.label_color) b.style.setProperty("--bc",e.label_color);
+      b.style.opacity=L.o; b.style.clipPath=`inset(-20% ${(1-k)*100}% -20% -5%)`; root.appendChild(b); } }
+  },
+  // ======== 제안 9종 — 2026-10-14 ========
+  // 시리즈 타이틀(전체 보드): chip, html(타이핑), sub, badges[[글,강조?]], next. 왼쪽 강사 창은 pip(shape:rect) 로 따로
+  title(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p); root.appendChild(f);
+    const T0=e.t0+(e.type_at??.5), dur=e.type_dur??1.4, n=Math.floor(visLen(e.html)*clamp((t-T0)/dur));
+    const typing=t<T0+dur+.6||Math.floor(t*2)%2===0;
+    const ap=k=>`opacity:${easeOut((t-(T0+dur+k))/.4)}`;
+    const d=div("n-title",(e.chip?`<span class="n-chip" style="${ap(-dur-.3)}">${e.chip}</span>`:"")+
+      `<div class="h">${typeHTML(e.html,n)}${typing?'<span class="n-caret"></span>':""}</div>`+
+      (e.sub?`<div class="sub" style="${ap(.1)}">${e.sub}</div>`:"")+
+      (e.badges?`<div class="badges" style="${ap(.3)}">${e.badges.map(b=>`<span class="${b[1]?"k":""}">${b[0]}</span>`).join("")}</div>`:"")+
+      (e.next&&t>=(e.next_at??0)?`<div class="next" style="opacity:${easeOut((t-(e.next_at??T0+dur+.6))/.4)}">${e.next}</div>`:""));
+    d.style.opacity=L.o; root.appendChild(d);
+  },
+  // 키워드 타이핑 + 손글씨 뜻풀이 띠: text, x, y, size, note, note_at
+  keyword(e,t,cam,root){ const L=life(e,t,.2,.3); if(!L.active) return;
+    const dur=e.type_dur??.6, n=Math.floor(visLen(e.text)*clamp((t-e.t0)/dur)), caret=t<e.t0+dur+.4||Math.floor(t*2)%2===0;
+    const na=e.note_at??(e.t0+dur+.3), q=easeOut((t-na)/.4);
+    const d=div("n-kw",`<div class="w" style="font-size:${e.size??120}px">${typeHTML(e.text,n)}${caret?'<span class="n-caret"></span>':""}</div>`+
+      (e.note&&q>0?`<div class="band" style="transform:rotate(-3deg);clip-path:inset(-10% ${(1-q)*100}% -10% 0)">${e.note}</div>`:""));
+    Object.assign(d.style,{left:(e.x??150)+"px",top:(e.y??300)+"px",opacity:L.o}); root.appendChild(d);
+  },
+  // 흩뿌린 태그: items:[{t,text,x,y,rot}] — 말하는 수만큼 하나씩 팝
+  tags(e,t,cam,root){ const L=life(e,t,.2,.35); if(!L.active) return;
+    (e.items||[]).forEach((it,i)=>{ if(t<it.t) return; const q=easeBack(clamp((t-it.t)/.4));
+      const d=div("n-tag",`<b>▶</b>${it.text}`); Object.assign(d.style,{left:it.x+"px",top:it.y+"px",opacity:L.o*clamp(q*1.4),
+        transform:`scale(${q}) rotate(${it.rot??((i%3-1)*4)}deg)`}); root.appendChild(d); });
+  },
+  // 문서 카드(전체 보드): title, date, rows[], total, example, hl_at(합계 형광펜)
+  doc(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p); root.appendChild(f);
+    const q=easeOut((t-e.t0-.15)/.6), hk=easeOut((t-(e.hl_at??e.t0+1.6))/.5);
+    const rows=(e.rows||[]).map(r=>`<div class="r"><span>${r}</span><span class="blur">₩ 12,345,678</span></div>`).join("");
+    const d=div("n-doc",`<div class="h">${e.title??""}${e.example?'<span class="ex">예시 화면</span>':""}</div>`+(e.date?`<div class="dt">${e.date}</div>`:"")+
+      `<div class="rows">${rows}</div><div class="tot"><i style="width:${hk*100}%"></i><span>${e.total??"합계"}</span><span class="blur">₩ 98,765,432</span></div>`);
+    d.style.opacity=L.o*q; d.style.transform=`translate(-50%,calc(-50% + ${(1-q)*120}px)) rotate(${(e.rot??-3)*q}deg)`; root.appendChild(d);
+  },
+  // 아이콘 대비(전체 보드): left/right {label, icons[], cap}, x_at(왼쪽 ✕), on_at(오른쪽 켜짐)
+  contrast(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p); root.appendChild(f);
+    const side=(s,x,on,a)=>{ const d=div("n-vs"+(on?" on":""),`<div class="lab">${s.label}</div><div class="ics">${(s.icons||[]).map(n=>icon(n,170)).join("")}</div><div class="vcap">${s.cap??""}</div>`);
+      d.style.left=x+"px"; d.style.opacity=a; return d; };
+    const xa=e.x_at??e.t0+1.5, oa=e.on_at??xa+1, xk=easeOut((t-xa)/.5), ok=easeOut((t-oa)/.5);
+    root.appendChild(side(e.left,180,false,L.o*easeOut(L.p)*(1-.45*xk)));
+    if(xk>0){ const s=svg(); s.style.opacity=L.o; const len=735;
+      [[240,260,760,700],[760,260,240,700]].forEach(([a,b,c,d2],i)=>{ const k=easeOut((t-xa-i*.18)/.35);
+        s.appendChild(el("path",{d:`M${a} ${b} L${c} ${d2}`,stroke:C.mk,"stroke-width":16,"stroke-linecap":"round",fill:"none","stroke-dasharray":len,"stroke-dashoffset":len*(1-k)})); });
+      root.appendChild(s); }
+    if(ok>0){ const a=div("n-arw","→"); a.style.opacity=L.o*ok; a.style.transform=`translateX(${(1-ok)*-40}px)`; root.appendChild(a);
+      const r=side(e.right,1120,true,L.o*ok); r.style.transform=`scale(${.92+.08*ok})`; root.appendChild(r); }
+  },
+  // 조회수 카운터: side,y, label, value(정수), example, foot, dur — 자릿수가 슬롯처럼 굴러 올라감
+  odometer(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const sd=e.side||"right", str=Math.round(e.value??0).toLocaleString("en-US"), ds=[...str].filter(c=>/\d/.test(c)).length;
+    let di=0; const html=[...str].map(c=>{ if(!/\d/.test(c)) return `<span class="sep">${c}</span>`;
+      const idx=di++, fromR=ds-1-idx, dur=(e.dur??1.6)+fromR*.12, q=easeOut((t-e.t0-.2)/dur), rounds=1+idx, tot=+c+10*rounds;
+      const col=Array.from({length:tot+1},(_,k)=>`<span>${k%10}</span>`).join("");
+      return `<div class="d"><div class="col" style="transform:translateY(${-q*tot*106}px)">${col}</div></div>`; }).join("");
+    const d=div("n-panel2 n-odo "+sd,`<div class="lab" style="font-size:28px;font-weight:700;color:var(--n-muted)">${e.label??""}${e.example?'<span class="n-exb">예시</span>':""}</div>`+
+      `<div class="digits">${html}</div>`+(e.foot?`<div class="foot">${e.foot}</div>`:""));
+    d.style[sd]=(e.margin??150)+"px"; d.style.top=(e.y??470)+"px";
+    const k=easeOut(L.p); d.style.opacity=L.o*k; d.style.transform=`translate(${(1-k)*(sd==="left"?-40:40)}px,-50%)`; root.appendChild(d);
+  },
+  // 아이콘 카드(전체 보드): chip, items:[{t,icon,title,desc}] — 말할 때 카드가 뜨고 지금 카드가 켜짐
+  cards(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p); root.appendChild(f);
+    if(e.chip){ const c=div("",`<span class="n-chip">${e.chip}</span>`); Object.assign(c.style,{position:"absolute",left:"110px",top:"90px",opacity:L.o}); root.appendChild(c); }
+    const its=e.items||[]; let cur=-1; its.forEach((it,i)=>{ if(t>=it.t) cur=i; });
+    const row=div("n-cards"); its.forEach((it,i)=>{ const q=t<it.t?0:easeBack(clamp((t-it.t)/.45));
+      const c=div("n-card"+(i===cur?" on":""),`<div class="ic">${icon(it.icon,150)}</div><div class="tt">${it.title}</div><div class="ds">${it.desc??""}</div>`);
+      c.style.opacity=clamp(q*1.3)*L.o; c.style.transform=`scale(${.85+.15*q})`; row.appendChild(c); });
+    root.appendChild(row);
+  },
+  // 로드맵(전체 보드): chip, title, items[](최대 10, 위 줄 →, 아래 줄 ←), pj[], start/goal — 길이 그려지며 노드가 차례로
+  road(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p); root.appendChild(f);
+    const its=e.items||[], n=its.length, half=Math.ceil(n/2), x0=220, x1=1580, y0=420, y1=760, pj=new Set(e.pj||[]);
+    const pos=its.map((_,i)=> i<half ? [x0+(x1-x0)*i/Math.max(half-1,1), y0] : [x1-(x1-x0)*(i-half)/Math.max(n-half-1,1), y1]);
+    const hd=div("",(e.chip?`<span class="n-chip">${e.chip}</span>`:"")+`<div style="font-weight:900;font-size:68px;letter-spacing:-0.03em;margin-top:14px;color:var(--n-ink);font-family:var(--f-body)">${e.title??""}</div>`);
+    Object.assign(hd.style,{position:"absolute",left:"110px",top:"80px",clipPath:`inset(0 ${(1-easeOut((t-e.t0-.1)/.5))*100}% 0 0)`}); f.appendChild(hd);
+    const D=e.draw??2.2, pq=clamp((t-e.t0-.4)/D);
+    const s=svg(), m=el("mask",{id:"rm"}), path=`M${x0} ${y0} H${x1} C${x1+180} ${y0} ${x1+180} ${y1} ${x1} ${y1} H${x0}`;
+    const mp=el("path",{d:path,stroke:"#fff","stroke-width":30,fill:"none"}); m.appendChild(mp); s.appendChild(m);
+    s.appendChild(el("path",{d:path,stroke:getComputedStyle(document.body).getPropertyValue("--n-line").trim()||"rgba(244,242,236,.85)","stroke-width":4,fill:"none","stroke-dasharray":"4 16","stroke-linecap":"round",mask:"url(#rm)"}));
+    f.appendChild(s); const len=mp.getTotalLength(); mp.setAttribute("stroke-dasharray",len); mp.setAttribute("stroke-dashoffset",len*(1-pq));
+    pos.forEach(([x,y],i)=>{ const at=e.t0+.4+D*(i/Math.max(n-1,1))*.92, q=t<at?0:easeBack(clamp((t-at)/.4)); if(q<=0) return;
+      const nd=div("n-rnode"+(pj.has(i+1)?" pj":""),String(i+1)); Object.assign(nd.style,{left:(x-40)+"px",top:(y-40)+"px",transform:`scale(${q})`}); f.appendChild(nd);
+      const lb=div("n-rlab",its[i]); Object.assign(lb.style,{left:(x-150)+"px",top:(y+52)+"px",opacity:clamp(q)}); f.appendChild(lb);
+      if(pj.has(i+1)){ const fl=div("n-flag","▶ PROJECT"); Object.assign(fl.style,{left:(x+8)+"px",top:(y-104)+"px",opacity:clamp(q)}); f.appendChild(fl); } });
+    const hs=(txt,x,y,at,col)=>{ const k=easeOut((t-at)/.4); if(k<=0) return; const h=div("n-hand",txt);
+      Object.assign(h.style,{left:x+"px",top:y+"px",fontSize:"64px",opacity:k,transform:"rotate(-7deg)"}); if(col) h.style.color=col; f.appendChild(h); };
+    if(e.start) hs(e.start,60,300,e.t0+.5); if(e.goal) hs(e.goal,40,860,e.t0+.4+D,"var(--n-key)");
+    root.appendChild(f);
+  },
+  // 강사 창 테두리(내용은 fx.py 가 실시간 원본 영상에서 잘라 넣음): shape circle(cx,cy,r) | rect(x,y,w,h). crop=[x0,y0,w,h]
+  pip(e,t,cam,root){ const L=life(e,t,.35,.3); if(!L.active) return; const k=easeOut(L.p)*L.o, sc=.9+.1*k;
+    if(e.shape==="rect"){ const w=e.w*sc,h=e.h*sc,x=e.x+e.w/2-w/2,y=e.y+e.h/2-h/2, d=div("n-pipr");
+      Object.assign(d.style,{left:(x-3)+"px",top:(y-3)+"px",width:(w+6)+"px",height:(h+6)+"px",opacity:k}); root.appendChild(d); }
+    else { const r=e.r*sc, d=div("n-pipc"); Object.assign(d.style,{left:(e.cx-r-6)+"px",top:(e.cy-r-6)+"px",width:(2*r+12)+"px",height:(2*r+12)+"px",opacity:k}); root.appendChild(d); }
+  },
+  // 간지: n(번호), total, title, sub — 오른쪽에서 밀려 들어와 왼쪽으로 빠진다(휩 전환과 같은 방향)
+  divider(e,t,cam,root){ if(t<e.t0||t>e.t1) return;
+    const ki=easeOut((t-e.t0)/.45), ko=easeOut((e.t1-t)/.4);
+    if(document.body.dataset.theme==="elearn"||e.style==="elearn"){   // 이러닝 간지: 코랄 띠·괄호 틀·단계 칩(steps) — 2026-10-15
+      const q=easeOut((t-e.t0-.2)/.5), q2=easeOut((t-e.t0-.35)/.5), kq=easeBack(clamp((t-e.t0-.15)/.5));
+      const st=(e.steps||[]).map((s,i)=>`<s class="${i+1===e.n?"on":i+1<e.n?"done":""}">${s}</s>`).join("");
+      const d=div("e-div",`<div class="bar"></div><div class="dots" style="opacity:${q}"></div>`+
+        `<div class="k k1" style="transform:scale(${kq});transform-origin:0 0"></div><div class="k k2" style="transform:scale(${kq});transform-origin:100% 100%"></div>`+
+        `<div class="no" style="opacity:${q}">${e.kick??`CHAPTER ${String(e.n).padStart(2,"0")}`}</div>`+
+        `<div class="h" style="opacity:${q};transform:translateX(${(1-q)*60}px)">${e.title??""}</div>`+
+        (e.sub?`<div class="sub" style="opacity:${q2}">${e.sub}</div>`:"")+(st?`<div class="steps" style="opacity:${q2};transform:translateY(${(1-q2)*14}px)">${st}</div>`:""));
+      d.style.clipPath=`inset(0 ${(1-ko)*100}% 0 ${(1-ki)*100}%)`; root.appendChild(d); return; }
+    const prog=e.total?`<div class="prog">${Array.from({length:e.total},(_,i)=>`<i class="${i+1===e.n?"on":i+1<e.n?"done":""}"></i>`).join("")}</div>`:"";
+    const q=easeOut((t-e.t0-.25)/.5), q2=easeOut((t-e.t0-.4)/.5);
+    const d=div("n-div",prog+`<div class="num" style="transform:translateX(${(1-q)*120}px);opacity:${q}">${String(e.n).padStart(2,"0")}</div>`+
+      `<div class="txt" style="transform:translateX(${(1-q2)*80}px);opacity:${q2}"><span class="part">PART ${String(e.n).padStart(2,"0")}</span>`+
+      `<div class="h">${e.title??""}</div>${e.sub?`<div class="sub">${e.sub}</div>`:""}</div>`);
+    d.style.clipPath=`inset(0 ${(1-ko)*100}% 0 ${(1-ki)*100}%)`; root.appendChild(d);
+  },
+  // 디자인 말자막: cues=[{s,e,lines}] (fx.py 의 load_subs 가 words.json 에서 만든다)
+  subs(e,t,cam,root){ const c=(e.cues||[]).find(c=>t>=c.s&&t<c.e); if(!c) return;
+    const d=div("n-sub"+(e.style&&e.style!=="box"?" "+e.style:""),c.lines.map(l=>`<span>${l}</span>`).join("")); d.style.opacity=clamp((t-c.s)/.08)*clamp((c.e-t)/.08);
+    if(e.size) d.style.setProperty("--sub-size",e.size+"px"); if(e.bottom!=null) d.style.setProperty("--sub-bottom",e.bottom+"px"); root.appendChild(d);
+  },
+  // 리프레임: 카메라(fx.py)가 화면을 키우며 강사를 왼쪽으로 밀고, 여기서는 오른쪽 보드(그라데이션)와 카드 글자를 그린다
+  reframe(e,t,cam,root){ if(t<e.t0||t>e.t1) return; const p=rfP(e,t);
+    const bd=div("n-board");
+    if(e.board_side==="left"){   // 강사 오른쪽 · 보드 왼쪽(한국 이러닝 배치) — 2026-10-15
+      const a=(e.fade0??1000)*p, b=(e.fade1??1180)*p; bd.style.webkitMaskImage=bd.style.maskImage=`linear-gradient(90deg,#000 ${a}px,transparent ${b}px)`; }
+    else { const a=1920+((e.fade0??860)-1920)*p, b=1920+((e.fade1??1030)-1920)*p;
+      bd.style.webkitMaskImage=bd.style.maskImage=`linear-gradient(90deg,transparent ${a}px,#000 ${b}px)`; }
+    root.appendChild(bd);
+    const k=easeOut((t-(e.t0+(e.ease_in??1.2)*.6))/.5); if(k<=0) return;
+    const sq=e.sub?easeOut((t-(e.sub_at??e.t0+1.6))/.45):0;
+    const d=div("n-rf",(e.chip?`<span class="n-chip">${e.chip}</span>`:"")+`<div class="h">${e.html??""}</div>`+(e.sub?`<div class="sub" style="opacity:${sq}">${e.sub}</div>`:""));
+    const tx=e.text_x??(e.board_side==="left"?110:1130), tw=e.board_side==="left"?(e.fade0??1000)-tx-60:1920-tx-90;
+    if(!e.html&&!e.chip&&!e.sub) return;
+    Object.assign(d.style,{left:tx+"px",top:(e.text_y??380)+"px",width:tw+"px",clipPath:`inset(-10% ${(1-k)*100}% -10% 0)`}); root.appendChild(d);
+  },
+  // 목차 그리드(전체 화면): items:[제목…], pj:[프로젝트 번호…](1부터), on: 강조 번호
+  toc(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p); const pj=new Set(e.pj||[]);
+    const cells=(e.items||[]).map((it,i)=>{ const q=easeBack(clamp((t-e.t0-.3-i*(e.gap??.07))/.4));
+      return `<div class="cell${pj.has(i+1)?" pj":""}${e.on===i+1?" on":""}" style="transform:scale(${q});opacity:${clamp(q)}"><div class="no">${String(i+1).padStart(2,"0")}</div>`+
+        `<div class="tt">${it}</div>${pj.has(i+1)?'<div class="pjt">PROJECT</div>':""}</div>`}).join("");
+    const d=div("n-toc",(e.chip?`<span class="n-chip">${e.chip}</span>`:"")+`<div class="h">${e.title??""}</div>`+(e.sub?`<div class="sub">${e.sub}</div>`:"")+`<div class="grid">${cells}</div>`);
+    d.style.clipPath=`inset(0 0 ${(1-easeOut((t-e.t0-.05)/.5))*100}% 0)`; f.appendChild(d); root.appendChild(f);
+  },
+  // ======== 이러닝 효과 (elearn) — 2026-10-15 ========
+  // 과정 배지(우상단): course, org
+  badge(e,t,cam,root){ const L=life(e,t,.5,.35); if(!L.active) return;
+    const d=div("e-badge",`<b>${e.course??""}</b>${e.org?`<i></i>${e.org}`:""}`); d.style.opacity=L.o*easeOut(L.p); root.appendChild(d);
+  },
+  // 2단 위치표시(좌상단): a(장), b(절). 탭이 내려오고 칩이 왼→오로 펼쳐진다
+  crumb(e,t,cam,root){ const L=life(e,t,.55,.35); if(!L.active) return;
+    const q1=easeOut(L.p/.6), q2=easeOut((L.p-.25)/.75);
+    const d=div("e-crumb",`<div class="a" style="opacity:${q1};transform:translateY(${(1-q1)*16}px)">${e.a??""}</div>`+
+      `<div class="b" style="clip-path:inset(-20% ${(1-q2)*100}% -30% 0)">${e.b??""}</div>`);
+    if(e.x!=null) d.style.left=e.x+"px"; if(e.y!=null) d.style.top=e.y+"px"; d.style.opacity=L.o; root.appendChild(d);
+  },
+  // 정의 카드: title(알약), label(검정 알약), lines:[{t,html}] — <b> 굵게·나머지 가늘게. x,y,w,align, title_at/label_at, pill(색)
+  def(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const pop=a=>{const q=t<a?0:easeBack(clamp((t-a)/.45)); return `opacity:${clamp(q*1.4)};transform:scale(${.86+.14*q});transform-origin:${e.align==="center"?"50%":"0"} 50%`};
+    const ta=e.title_at??e.t0, la=e.label_at??(e.t0+.5);
+    const lines=(e.lines||[]).map(l=>{ const a=l.t??e.t0, q=easeOut((t-a)/.55);
+      return `<div class="ln" style="-webkit-mask-image:linear-gradient(90deg,#000 ${q*130-30}%,transparent ${q*130}%)">${l.html}</div>`}).join("");
+    const d=div("e-def",(e.title?`<div class="tp" style="${pop(ta)}">${e.title}</div>`:"")+(e.title&&e.label?'<div class="gap"></div>':"")+
+      (e.label?`<div class="lb" style="${pop(la)}">${e.label}</div>`:"")+(lines?'<div class="gap2"></div>'+lines:""));
+    Object.assign(d.style,{left:(e.x??110)+"px",top:(e.y??230)+"px",textAlign:e.align??"left",opacity:L.o}); if(e.w) d.style.width=e.w+"px";
+    if(e.pill) d.style.setProperty("--pill",e.pill); root.appendChild(d);
+  },
+  // 이름표(이러닝): style "marker"(소속 위 + 이름 형광펜, plate:false 면 판 없이) | "pill"(남색 이름 알약 + 소속 알약). name, org, x, y
+  nametag(e,t,cam,root){ const L=life(e,t,.5,.35); if(!L.active) return;
+    const k=easeOut(L.p);
+    if(e.style==="pill"){ const q2=easeBack(clamp((t-e.t0-.25)/.45));
+      const d=div("e-np",`<div class="nm" style="clip-path:inset(-10% ${(1-k)*100}% -10% 0)">${e.name}</div><br><div class="org" style="opacity:${clamp(q2*1.4)};transform:translateY(${(1-q2)*14}px)">${e.org??""}</div>`);
+      Object.assign(d.style,{left:(e.x??1260)+"px",top:(e.y??600)+"px",opacity:L.o}); root.appendChild(d); return; }
+    const hk=easeOut((t-e.t0-.35)/.45);
+    const d=div("e-mk"+(e.plate===false?"":" plate"),`<div class="org">${e.org??""}</div><div class="nm" style="--hw:${hk*100}%">${e.name}</div>`);
+    Object.assign(d.style,{left:(e.x??1280)+"px",top:(e.y??200)+"px",opacity:L.o*k,transform:`translateY(${(1-k)*18}px)`}); root.appendChild(d);
+  },
+  // 스티커 문장(강사 옆): lines:[{t,html}], x, y, size, align — 줄마다 왼→오 부드러운 와이프(글자가 서서히 진해짐)
+  ktext(e,t,cam,root){ const L=life(e,t,.3,.35); if(!L.active) return;
+    const ls=(e.lines||[]).map(l=>{ const a=l.t??e.t0, q=clamp((t-a)/(e.wipe??.7));
+      return q<=0?`<div class="l" style="visibility:hidden">${l.html}</div>`:`<div class="l" style="-webkit-mask-image:linear-gradient(90deg,#000 ${q*140-40}%,transparent ${q*140}%)">${l.html}</div>`}).join("");
+    const d=div("e-kt",ls); Object.assign(d.style,{left:(e.x??140)+"px",top:(e.y??330)+"px",textAlign:e.align??"left",opacity:L.o});
+    if(e.size) d.style.setProperty("--kt-size",e.size+"px"); root.appendChild(d);
+  },
+  // 특징 칩 + 굵은 문장: chip, html(<b> 코랄), x, bottom, color
+  feature(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const q=easeBack(clamp((t-e.t0)/.45)), w=easeOut((t-e.t0-.35)/.6);
+    const d=div("e-feat",`<div class="c" style="opacity:${clamp(q*1.4)};transform:scale(${.7+.3*q})">${e.chip??""}</div>`+
+      `<div class="s" style="-webkit-mask-image:linear-gradient(90deg,#000 ${w*140-40}%,transparent ${w*140}%)">${e.html??""}</div>`);
+    if(e.x!=null) d.style.left=e.x+"px"; if(e.bottom!=null) d.style.bottom=e.bottom+"px"; if(e.color) d.style.setProperty("--feat",e.color);
+    d.style.opacity=L.o; root.appendChild(d);
+  },
+  // 학습목표(전체 보드): title("학습목표"), en("GOALS"), items:[{t,html}] 번호 원 + 문장. name/role 이 있으면 강사 창(pip) 아래 이름
+  goals(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p); root.appendChild(f);
+    const rows=(e.items||[]).map((it,i)=>{ const a=it.t??(e.t0+.6+i*.5); if(t<a) return `<div class="r" style="visibility:hidden"><i>${i+1}</i><div>${it.html}</div></div>`;
+      const q=easeOut((t-a)/.45); return `<div class="r" style="opacity:${q};transform:translateX(${(1-q)*-24}px)"><i>${i+1}</i><div>${it.html}</div></div>`}).join("");
+    const q=easeOut((t-e.t0-.1)/.5);
+    const c=div("e-goal",`<div class="h">${e.title??"학습목표"}<small>${e.en??"GOALS"}</small></div><div class="rows">${rows}</div>`);
+    c.style.opacity=L.o*q; c.style.transform=`translateY(${(1-q)*30}px)`; if(e.w) c.style.width=e.w+"px"; root.appendChild(c);
+    if(e.name){ const n=div("e-name",`${e.name}${e.role?`<span>${e.role}</span>`:""}`); Object.assign(n.style,{left:(e.name_x??1610)+"px",top:(e.name_y??780)+"px",transform:"translateX(-50%)",opacity:L.o*q}); root.appendChild(n); }
+  },
+  // 영상 속 퀴즈(전체 보드): q, choices[], answer(1부터), reveal_at(정답 공개), think(링 초), explain. choices 가 없으면 '생각해 보기'
+  quiz(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p); root.appendChild(f);
+    const ra=e.reveal_at??(e.t1-2.5), th=e.think??3, rv=t>=ra, chs=e.choices||[];
+    const q=easeOut((t-e.t0-.1)/.5);
+    const ch=chs.length?`<div class="ch">${chs.map((c,i)=>{ const a=e.t0+.5+i*.15, k=easeOut((t-a)/.35), ok=rv&&i+1===e.answer;
+      return `<div class="${ok?"ok":""}" style="opacity:${k*(rv&&!ok?.42:1)};transform:translateY(${(1-k)*16}px)"><i>${i+1}</i>${c}</div>`}).join("")}</div>`:"";
+    const ex=e.explain&&rv?`<div class="ex" style="opacity:${easeOut((t-ra-.4)/.5)}">${e.explain}</div>`:"";
+    const d=div("e-quiz"+(chs.length?"":" think"),`<span class="q">${e.chip??(chs.length?"Q. 확인 문제":"생각해 보기")}</span><div class="h">${e.q??""}</div>${ch}${ex}`);
+    d.style.opacity=L.o*q; d.style.transform=`translateY(${(1-q)*24}px)`; root.appendChild(d);
+    if(chs.length){ const p=clamp((t-(ra-th))/th), left=Math.max(1,Math.ceil(ra-t)), C2=2*Math.PI*130;
+      const r=div("e-ring",`<svg viewBox="0 0 300 300" width="300" height="300" style="position:absolute;inset:0"><circle cx="150" cy="150" r="130" fill="#fff" stroke="#E2E5EB" stroke-width="18"/>`+
+        `<circle cx="150" cy="150" r="130" fill="none" stroke="${C.key||"#E65347"}" stroke-width="18" stroke-linecap="round" stroke-dasharray="${C2}" stroke-dashoffset="${C2*(1-p)}" transform="rotate(-90 150 150)"/></svg>`+
+        `<b>${rv?"✓":(t>=ra-th?left:"?")}</b><small>${rv?"정답":e.ring_note??`${th}초 생각해 보세요`}</small>`);
+      r.style.opacity=L.o*q; if(rv) r.style.transform=`scale(${.9+.1*easeBack(clamp((t-ra)/.4))})`; root.appendChild(r); }
+  },
+  // 정리하기(전체 보드): rows:[{t,html}] 체크 + done("학습목표 달성 ✓") + next(다음 차시). 강사 창은 pip 로(왼쪽 블록 아래)
+  summary(e,t,cam,root){ const L=life(e,t,.45,.35); if(!L.active) return;
+    const f=div("n-full"); f.style.opacity=L.o*easeOut(L.p); root.appendChild(f);
+    const ck='<svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="26" fill="'+(C.key||"#E65347")+'"/><path d="M16 29 l8 8 l16 -18" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const rows=(e.rows||[]).map((r,i)=>{ const a=r.t??(e.t0+.6+i*.5); if(t<a) return `<div class="r" style="visibility:hidden">${ck}<div>${r.html}</div></div>`;
+      const q=easeOut((t-a)/.45), s=easeBack(clamp((t-a)/.4)); return `<div class="r" style="opacity:${q};transform:translateX(${(1-q)*30}px)"><span style="display:inline-flex;transform:scale(${s})">${ck}</span><div>${r.html}</div></div>`}).join("");
+    const q=easeOut((t-e.t0-.05)/.45), nq=easeOut((t-(e.next_at??e.t1-1.6))/.45);
+    const d=div("e-sum",`<div class="side" style="transform:translateX(${(1-q)*-520}px)"><div class="h">${e.title??"정리<br>하기"}</div><small>${e.en??"SUMMARY"}</small></div>`+
+      `<div class="done" style="opacity:${easeOut((t-e.t0-.4)/.4)}">${e.done??"학습목표 달성 ✓"}</div><div class="rows">${rows}</div>`+
+      (e.next?`<div class="next" style="opacity:${nq}"><span>${e.next_chip??"다음 차시"}</span><b>${e.next}</b></div>`:""));
+    d.style.opacity=L.o; root.appendChild(d);
+  },
+};
+// 타이핑: html 의 보이는 글자 n 개까지(태그는 그대로)
+function typeHTML(h,n){ let o="",c=0,i=0; while(i<h.length&&c<n){ if(h[i]==="<"){ const j=h.indexOf(">",i); o+=h.slice(i,j+1); i=j+1; continue; }
+  if(h[i]==="&"){ const j=h.indexOf(";",i); o+=h.slice(i,j+1); i=j+1; c++; continue; } o+=h[i++]; c++; } return o; }
+function visLen(h){ return (h||"").replace(/<[^>]+>/g,"").replace(/&[^;]+;/g,"x").length; }
+// 리프레임 진행도 — fx.py reframe_p() 와 같은 식(들어갈 때 ease_in, 나올 때 ease_out=0 이면 한 번에)
+function rfP(e,t){ const di=e.ease_in??1.2, d2=e.ease_out??0; return t<e.t0+di?io((t-e.t0)/di):(d2>0&&t>e.t1-d2?io((e.t1-t)/d2):1); }
+// 선 아이콘(직접 그림 — 외부 자산 없음)
+const ICONS={scissors:'<circle cx="22" cy="70" r="12"/><circle cx="22" cy="30" r="12"/><path d="M32 36 L84 74 M32 64 L84 26"/>',
+ caption:'<rect x="10" y="22" width="80" height="56" rx="8"/><path d="M24 56 h20 M52 56 h24 M24 66 h34"/>',
+ bulb:'<path d="M50 14 a26 26 0 0 1 16 46 v10 h-32 v-10 a26 26 0 0 1 16 -46z"/><path d="M38 80 h24 M42 88 h16"/>',
+ blueprint:'<rect x="12" y="14" width="76" height="72" rx="6"/><path d="M12 38 h76 M40 14 v72 M54 52 h22 v20 h-22z"/>',
+ target:'<circle cx="50" cy="50" r="36"/><circle cx="50" cy="50" r="22"/><circle cx="50" cy="50" r="7"/><path d="M50 50 L86 14 M76 14 h10 v10"/>',
+ network:'<circle cx="50" cy="22" r="10"/><circle cx="20" cy="74" r="10"/><circle cx="80" cy="74" r="10"/><circle cx="50" cy="56" r="8"/><path d="M50 32 v16 M43 61 L28 68 M57 61 L72 68"/>',
+ robot:'<rect x="18" y="30" width="64" height="48" rx="12"/><circle cx="38" cy="52" r="6"/><circle cx="62" cy="52" r="6"/><path d="M50 14 v16 M40 66 h20 M10 50 v12 M90 50 v12"/>',
+ up:'<path d="M12 80 L40 50 L56 64 L88 26 M70 26 h18 v18"/>',
+ doc:'<path d="M24 10 h38 l18 18 v62 h-56z M62 10 v18 h18"/><path d="M34 48 h32 M34 60 h32 M34 72 h20"/>'};
+function icon(n,s=96){ return `<svg class="n-ic" viewBox="0 0 100 100" width="${s}" height="${s}">${ICONS[n]||""}</svg>`; }
+// 분할 보드 기하 — fx.py 의 board_geom()/board_p() 와 같은 식이어야 카드 자리와 줄어든 화면이 맞는다
+function boardGeom(e){ const c=e.card||[96,190,1000,660], b=e.box; const sc=Math.min(c[2]/b[2],c[3]/b[3]);
+  return {c, sc, ox:c[0]+c[2]/2-(b[0]+b[2]/2)*sc, oy:c[1]+c[3]/2-(b[1]+b[3]/2)*sc}; }
+function boardP(e,t){ const d=e.ease??.8; return t<e.t0+d?io((t-e.t0)/d):(t>e.t1-d?io((e.t1-t)/d):1); }
+
+// 강조자막 프리셋 본문. items 앞에 "!" 를 붙이면 코랄로 강조한다
+const chip=s=>`<span class="chip${s.startsWith("!")?" on":""}">${s.replace(/^!/,"")}</span>`;
+function capHTML(e){
+  const k=e.label?`<span class="k">${e.label}</span>`:"";
+  switch(e.kind){
+    case "title": return `<span class="kick">${e.kick??""}</span>${e.html}`;
+    case "label": return k+e.html;
+    case "list":  return k+`<div class="chips">${(e.items||[]).map(chip).join("")}</div>`;
+    case "steps": return k+`<div class="chips">${(e.items||[]).map(chip).join('<span class="ar">→</span>')}</div>`;
+    case "fix":   return `<div class="row"><span class="tg t1">${e.label??"결과"}</span><span class="bad">${e.bad}</span></div>`+
+                         `<div class="row"><span class="ar">→</span><span class="tg t2">${e.fixlabel??"수정"}</span><span>${e.html}</span></div>`;
+    default:      return k+(e.html??"");   // key
+  }
+}
+// 라벨은 대상 위에 붙는다. 화면 위로 나가면(검색창·주소창처럼 맨 위 대상) 대상 아래로 — 2026-10-08
+function tag(e,L,x,y,root,h=0){ const d=document.createElement("div"); const below=e.label_pos==="below"||(y-58<6&&e.label_pos!=="above");
+  d.className="tag"+(below?" below":""); d.textContent=e.label;
+  d.style.left=x+"px"; d.style.top=(below?y+h+14:y-58)+"px"; d.style.opacity=L.o*easeOut(clamp((L.p-.3)/.7));
+  d.style.transform=`translateY(${(1-easeOut(clamp((L.p-.3)/.7)))*10}px)`; root.appendChild(d); }
+
+// ---------- 진입점: fx.py 가 프레임마다 부른다 ----------
+let EFFECTS=[];
+// 보드 배경은 화면을 덮으므로 맨 먼저 그린다 — 나머지(머리말·형광펜·주석)는 그 위에, spec 순서대로
+// 말자막은 맨 위(마지막) — 화면을 덮는 장면에서도 보이게 (2026-10-14)
+// 상시 표시(과정 배지·위치표시)는 보드·리프레임·전체 화면 카드 위에, 말자막 아래에 — 한국 이러닝처럼 늘 보이게 (2026-10-15)
+const HUD=new Set(["badge","crumb"]);
+window.setEffects=list=>{EFFECTS=[...list.filter(e=>e.type==="board"),...list.filter(e=>e.type!=="board"&&e.type!=="subs"&&!HUD.has(e.type)),
+  ...list.filter(e=>HUD.has(e.type)),...list.filter(e=>e.type==="subs")]};
+// 테마: 없으면 기본(코랄). "night" = 나이트 스튜디오. 글꼴은 쓰일 때 받으므로 여기서 미리 받아 둔다
+window.setTheme=async name=>{
+  if(name) document.body.dataset.theme=name; else delete document.body.dataset.theme;
+  const cs=getComputedStyle(document.body), v=k=>cs.getPropertyValue(k).trim();
+  C={mk:v("--mk"),mkSoft:v("--mk-soft"),mkRing:v("--mk-ring"),hl:v("--hl"),key:v("--n-key")};
+  // 글꼴은 쓰일 때 받으므로 미리 받아 둔다(첫 프레임이 대체 글꼴로 찍히지 않게)
+  const extra=name==="night"?['40px "East Sea Dokdo"']:name==="elearn"?['40px "East Sea Dokdo"',...[300,500,700].map(w=>`${w} 40px GmarketSans`),...[400,500,700].map(w=>`${w} 40px "Noto Sans KR"`)]:[];
+  await Promise.all([...[400,500,600,700,800,900].map(w=>`${w} 40px Pretendard`),...extra].map(f=>document.fonts.load(f,"가A1")));
+  return name||"default";
+};
+// 겹침 검사용: 화면을 덮는 배경(보드·베일·자막)을 뺀 그려진 요소들의 상자
+window.boxes=()=>[...document.getElementById("stage").children].filter(el=>!/\bn-(full|board|veil|sub)\b/.test(el.className))
+  .map(el=>{const r=el.getBoundingClientRect(); return [el.className||el.tagName, r.x, r.y, r.width, r.height]})
+  .filter(b=>b[3]>4&&b[4]>4&&!(b[3]>=1900&&b[4]>=1060));
+window.render=(t,cam)=>{
+  const root=document.getElementById("stage"); root.innerHTML="";
+  let n=0;
+  for(const e of EFFECTS){ if(t<e.t0||t>e.t1||!draw[e.type]) continue; draw[e.type](e,t,cam,root); n++; }
+  return n;
+};
+</script></body></html>

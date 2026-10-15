@@ -1,7 +1,7 @@
 """실습 환경 점검 — 무엇이 빠졌는지 한눈에.
 
     python tools/check_env.py            # 설치 점검
-    python tools/check_env.py --smoke    # + 체크포인트로 미리보기 한 장을 실제로 만들어 본다(10~30초)
+    python tools/check_env.py --smoke    # + 코드 데모로 네 양식 실제 미리보기 시험
 """
 import importlib, platform, subprocess, sys, time
 from pathlib import Path
@@ -61,20 +61,21 @@ if "playwright" not in missing:
         row(False, "크로미움(Playwright)", "→ python -m playwright install chromium" + f"  ({type(e).__name__})")
 
 M = ROOT / "media"
-for name, pat in [("샘플 영상(.mp4)", "*.mp4"), ("받아쓰기(.words.json)", "*.words.json"), ("받아쓰기(.vtt)", "*.vtt"),
-                  ("샘플정보.md", "샘플정보.md"), ("예시 spec", "examples/*.json"), ("체크포인트 spec", "checkpoints/*.json")]:
-    found = sorted(M.glob(pat))
-    row(bool(found), f"media/ {name}", found[0].name if found else "→ 노션 가이드의 샘플 묶음을 media/ 폴더에 넣으세요")
+videos = sorted(M.rglob("*.mp4"))
+print(f"\n실습 원본: {len(videos)}개. 배포 샘플의 VTT·words.json을 재사용합니다. VTT만으로 문장 자막도 가능합니다.")
+if not videos:
+    print("→ 노션 샘플 영상 또는 본인 영상을 media/에 넣으세요. 도구 점검은 계속합니다.")
+for name in ("landscape.py", "landscape_overlay.html", "shorts.py", "shorts_overlay.html", "subtitles.py", "prepare_video.py", "transcribe.py"):
+    row((ROOT / "tools" / name).exists(), name)
+row((ROOT / "docs/styles/index.html").exists(), "대표 양식 이미지 갤러리")
 
 if "--smoke" in sys.argv and ok_all:
-    cps = sorted((M / "checkpoints").glob("*.json"))
-    if cps:
-        t = time.time()
-        r = subprocess.run([sys.executable, str(ROOT / "tools" / "shorts.py"), str(cps[0]), "--preview"],
-                           capture_output=True, text=True, encoding="utf-8", errors="replace")
-        prev = sorted((ROOT / "out").glob("*_preview.jpg"), key=lambda p: p.stat().st_mtime)
-        good = r.returncode == 0 and prev and prev[-1].stat().st_mtime >= t - 1
-        err = ((r.stderr or r.stdout).strip().splitlines() or ["?"])[-1][:120]
-        row(bool(good), "미리보기 시험", f"{time.time() - t:.0f}초 · out/{prev[-1].name}" if good else "→ 오류: " + err)
+    t = time.time()
+    r = subprocess.run([sys.executable, str(ROOT / "tools/style_previews.py")], capture_output=True, text=True, encoding="utf-8", errors="replace")
+    prev = [ROOT / f"docs/styles/{i}.jpg" for i in range(1,5)]
+    good = r.returncode == 0 and all(p.exists() and p.stat().st_mtime >= t-1 for p in prev)
+    err = ((r.stderr or r.stdout).strip().splitlines() or ["?"])[-1][:120]
+    row(good, "4양식 미리보기 시험", f"{time.time()-t:.0f}초 · 합성 데모, 샘플 영상 불필요" if good else "→ 오류: " + err)
 
-print("\n" + ("모두 준비됐습니다. 이제 Claude Code 에서 이 폴더를 여세요." if ok_all else "❌ 항목을 고친 뒤 다시 실행하세요. 막히면 옆 사람이나 진행자에게!"))
+print("\n" + ("도구 준비 완료. prepare_video.py로 선택한 원본의 기존 자막·대표 화면을 확인하세요. 샘플 STT 재실행은 필요 없습니다." if ok_all else "❌ 항목을 고친 뒤 다시 실행하세요."))
+sys.exit(0 if ok_all else 1)
