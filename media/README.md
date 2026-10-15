@@ -5,7 +5,7 @@
 ```
 media/
   OT_촬영본.mp4  OT_촬영본.vtt  OT_촬영본.words.json   샘플 영상과 받아쓰기
-  샘플정보.md                                           에이전트가 먼저 읽는 안내(교정표·예시 목록)
+  샘플정보.md  장면지도.md                              에이전트가 먼저 읽는 안내(교정표·예시 목록·6장면 지도)
   examples/  checkpoints/                               완성 예시 spec · 렌더만 하면 되는 spec
 ```
 

@@ -16,14 +16,23 @@
 5. 설치 스크립트를 실행합니다 (레포 폴더에서):
    - Windows: `powershell -ExecutionPolicy Bypass -File setup\setup_windows.ps1`
    - Mac: `bash setup/setup_mac.sh`
-6. 마지막에 **모두 ✅** 가 나오면 끝. ❌ 가 있으면 화살표(→) 안내대로 고치고 `python tools/check_env.py` 를 다시 실행합니다.
+6. 마지막에 **모두 ✅**(맨 끝 '미리보기 시험'까지)가 나오면 끝. ❌ 가 있으면 화살표(→) 안내대로 고치고 `python tools/check_env.py --smoke` 를 다시 실행합니다.
+7. Claude Code 에서 이 폴더를 한 번 열어 **로그인이 살아 있는지** 확인합니다(당일 로그인이 가장 많이 막힙니다).
 
 > ffmpeg 는 따로 설치하지 않아도 됩니다(파이썬 패키지에 들어 있음). 크로미움은 설치 스크립트가 받습니다(약 150MB).
 > 렌더 중에 글꼴을 인터넷에서 받으므로 와이파이가 필요합니다.
 
 ## 2. 실습 (세미나 당일)
 
+**2인 1조**: 🖐 드라이버(키보드·허용 버튼)와 🎬 디렉터(고르기·평가).
 Claude Code 에서 **이 폴더를 열고**, 아래 프롬프트를 차례로 보냅니다. 문장은 자유롭게 바꿔도 됩니다 → [`prompts/프롬프트카드.md`](prompts/프롬프트카드.md)
+
+> Claude Code 가 "이 명령을 실행해도 될까요?" 하고 물으면 **허용(Allow)** 을 누르세요. 렌더러를 돌리는 것이라 안전합니다.
+
+옆에 띄워 둘 것
+- [`docs/부탁할_수_있는_것.md`](docs/부탁할_수_있는_것.md) — 말로 부탁할 수 있는 화면·글자·효과 메뉴판
+- [`docs/기획_워크시트.md`](docs/기획_워크시트.md) — 직접 기획할 때 채우는 칸 + 결과 체크 5가지
+- `media/장면지도.md`(노션 묶음) — 샘플 영상 2분을 6장면으로 나눈 지도
 
 | # | 보낼 말 | 무엇이 일어나나 |
 |---|---|---|
@@ -42,7 +51,11 @@ python tools/shorts.py media/checkpoints/<체크포인트>.json             # �
 python tools/shorts.py media/examples/<예시>.json --fps 15             # 예시, 빠르게
 ```
 
-## 4. 막힐 때
+## 4. 세미나 뒤: 내 영상으로
+
+받아쓰기 도구(`tools/transcribe.py`)로 내 영상의 받아쓰기를 만들면 같은 방법으로 됩니다 → [`docs/내_영상으로_해보기.md`](docs/내_영상으로_해보기.md)
+
+## 5. 막힐 때
 
 | 증상 | 해결 |
 |---|---|
@@ -51,6 +64,9 @@ python tools/shorts.py media/examples/<예시>.json --fps 15             # 예�
 | 렌더가 너무 느림 | `--fps 15`, 또는 "구간을 3개로 줄여 줘" |
 | 제목 글꼴이 이상함 | 인터넷 연결 확인(글꼴 CDN) |
 | 시간이 없음 | `media/checkpoints/` spec 을 렌더해 결과부터 보고 거기서 고치기 |
+| Claude Code 가 계속 허락을 물음 | 매번 **허용**. 같은 명령은 "항상 허용"을 골라도 됩니다 |
+| 압축 푼 파일 이름이 깨짐 | 7-Zip·반디집으로 다시 풀기(Mac 은 기본 압축 풀기) |
+| 폴더를 못 찾음(Claude Code) | 레포 폴더 **안**(README.md 가 보이는 곳)을 열었는지 확인 |
 
 ## 폴더
 
@@ -58,6 +74,8 @@ python tools/shorts.py media/examples/<예시>.json --fps 15             # 예�
 AGENTS.md / CLAUDE.md          에이전트가 읽는 지침(누구인지·규칙)
 .claude/skills/shorts-maker/   쇼츠 만드는 절차와 spec 사용법
 tools/shorts.py                렌더러(가로 → 세로 쇼츠)    tools/check_env.py  환경 점검
+tools/transcribe.py            내 영상 받아쓰기(선택)
+docs/                          메뉴판 · 기획 워크시트 · 내 영상으로 해 보기
 media/                         실습 영상·받아쓰기·예시 spec(노션에서 받기, 레포에는 없음)
 work/  out/                    여러분 spec / 결과 영상
 ```

@@ -2,4 +2,4 @@
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m playwright install chromium
-python tools\check_env.py
+python tools\check_env.py --smoke
