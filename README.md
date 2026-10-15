@@ -11,6 +11,7 @@
 ### 받을 것은 두 가지입니다
 
 1. **에이전트·스킬·편집 도구:** [실습 GitHub](https://github.com/dohyeon9483/handson-shorts-agent) → 초록색 **Code → Download ZIP** → 압축 풀기. Git 명령어나 별도 스킬 설치는 필요 없습니다.
+   에이전트에게 맡겨도 됩니다(git 이 있을 때): **"이 저장소를 현재 작업 폴더에 클론해 줘. https://github.com/dohyeon9483/handson-shorts-agent"** → 클론이 끝나면 **그 폴더를 다시 엽니다.**
 2. **실습 샘플:** 노션에서 `노션배포_실습샘플_원본3종.zip`을 받습니다. 각 원본의 **MP4 + VTT + words.json**이 들어 있습니다. words.json은 미리 STT로 만든 낱말 시각으로, 실습 중 받아쓰기 없이 낱말 강조를 사용할 수 있게 해 줍니다. 압축 해제와 작업 폴더로 복사는 에이전트에게 맡겨도 됩니다. 본인 가로 영상을 써도 됩니다.
 
 Claude Code 또는 Codex에서 GitHub ZIP을 푼 폴더 중 **README.md와 AGENTS.md가 함께 보이는 폴더**를 엽니다. 다른 폴더를 열면 내려받은 지침과 스킬을 찾지 못할 수 있습니다.
